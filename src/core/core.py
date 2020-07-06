@@ -45,9 +45,37 @@ def get_tokens(expression):
                     raise ValueError("two . is not allowed in number")
         else:
             raise ValueError(f"{ch} is not a valid character")
+    convert_string_numbers_to_actual_one(tokens)
     return tokens
-            
-        
+
+
+def convert_string_numbers_to_actual_one(tokens_list):
+    """
+    function replaces string representationg of tokens with
+    python int or float one
+    """
+    for index in range(len(tokens_list)):
+        token = tokens_list[index]
+        if str_is_number(token):
+            if "." in token:
+                token = float(token)
+            else:
+                token = int(token)
+        tokens_list[index] = token
+
+           
+def str_is_number(token):
+    """
+    function returns True if token is str, representing number
+    int or float in python format
+    """
+    # function is based on restrictions of get_tokens result
+    for ch in token:
+        if ch not in DIGITS and ch != ".":
+            return False
+    return True
+
+
 def convert_to_rpn(tokens_list):
     """
     function converting list of tokens to expression in Reverse Polish Nonation
@@ -58,10 +86,6 @@ def convert_to_rpn(tokens_list):
     while len(tokens_list) != 0:
         token = tokens_list.pop(0)
         if is_number(token):
-            if "." in token:
-                token = float(token)
-            else:
-                token = int(token)
             output_list.append(token)
         elif is_function(token):
             pass
@@ -91,11 +115,7 @@ def convert_to_rpn(tokens_list):
 
 
 def is_number(token):
-    # function is based on restrictions of get_tokens result
-    for ch in token:
-        if ch not in DIGITS and ch != ".":
-            return False
-    return True
+    return type(token) == int or type(token) == float
 
 def is_function(token):
     # temp mock, while there are no functions
