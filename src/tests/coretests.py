@@ -36,9 +36,23 @@ def test_tokenizer():
 
 	print("tokenizer test succeeded")
 
+def test_rpn_convertor():
+	convert = core.convert_to_rpn
+
+	assert convert(["1","+","2"]) == [1,2,"+"]
+	assert convert(["15.37","+","2.8"]) == [15.37,2.8,"+"]
+	assert convert(["2","*","3","+","4"]) == [2,3,"*",4,"+"]
+	assert convert(["2","*","(","3","+","4",")"]) == [2,3,4,"+","*"]
+	assert convert(["5","/","(","35","*","8.7",")"]) == [5,35,8.7,"*","/"]
+
+	print("rpn-convertor test succeeded")
+
+
+
 
 def run_core_tests():
 	test_tokenizer()
+	test_rpn_convertor()
 
 if __name__ == "__main__":
 	import sys, os
