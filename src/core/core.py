@@ -16,11 +16,23 @@ PRECEDENCE = {'+':1,'-':1,
               '*':2,'/':2,
               "(":3,")":3}
 
+UNARY_OPERATIONS = []
+BINARY_OPERATIONS = ['+','-','*','/']
+OPERATION_REALISATIONS = {"+":lambda x,y:x+y,
+                          "-":lambda x,y:x-y,
+                          "*":lambda x,y:x*y,
+                          "/":lambda x,y:x/y}
+
 ASSOCIATIVITY = {'+':"left",'-':"left",
                  '*':"left",'/':"left"}
  
 
-def get_tokens(expression):
+def get_tokens(expression:str) -> list:
+    """
+    function converting expression to the list of tokens
+    for futher work with them
+    """
+    function converting 
     tokens = []
     
     for ch in expression:
@@ -76,7 +88,7 @@ def str_is_number(token):
     return True
 
 
-def convert_to_rpn(tokens_list):
+def convert_to_rpn(tokens_list) -> list:
     """
     function converting list of tokens to expression in Reverse Polish Nonation
     using Shunting-yard algorithm
@@ -125,4 +137,27 @@ def is_operation(token):
     return token in OPERATIONS
 
 
-def evalute(rpn_expression):pass
+def evalute(rpn_expression) -> float:
+    """
+    function evaluating expression in RPN form
+    in:list of operations and arguments in RPN
+    out: expression evaluation value
+    mutates rpn_expression argument
+    """
+    while len(rpn_expression) != 1:
+        index = 0
+        while not is_operation(rpn_expression[index]):
+            index += 1
+        operation = rpn_expression[index]
+        operation_realization = OPERATION_REALISATIONS[operation]
+        if operation in BINARY_OPERATIONS:
+            arguments = (rpn_expression[index-2],rpn_expression[index-1])
+            calculation_result = [operation_realization(*arguments)]
+            rpn_expression[index - 2: index + 1] = calculation_result
+        elif operation in UNARY_OPERATIONS:
+            arguments = (rpn_expression[index - 1])
+            calculation_result = [operation_realization(*arguments)]
+            rpn_expression[index - 1:index + 1] = calculation_result
+    
+    return rpn_expression[0]
+
