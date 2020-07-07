@@ -1,4 +1,5 @@
 import core
+from . import testutil
 
 def test_tokenizer():
 	get_tokens = core.get_tokens
@@ -44,11 +45,26 @@ def test_rpn_convertor():
 	print("rpn-convertor test succeeded")
 
 
+def test_evaluator():
+	evaluate = core.evaluate
+
+	expecations = ((([2,2,"+"],),4),
+				   (([5,3,"-"],),2),
+				   (([2,2,2,"*","+"],),6),
+				   (([2,2,2,"+","*"],),8),
+				   (([5,10,2,"/","/"],),1),
+				   (([45.8,75.3,8,6,"/","*","-"],),(-54.6)),
+				   (([-1,-1,"*"],),1,))
+	testutil.test(evaluate,expecations)
+	print("evaluator test succeded")
+
+
 
 
 def run_core_tests():
 	test_tokenizer()
 	test_rpn_convertor()
+	test_evaluator()
 
 if __name__ == "__main__":
 	import sys, os
