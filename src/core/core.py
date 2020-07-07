@@ -32,7 +32,6 @@ def get_tokens(expression:str) -> list:
     function converting expression to the list of tokens
     for futher work with them
     """
-    function converting 
     tokens = []
     
     for ch in expression:
@@ -137,13 +136,13 @@ def is_operation(token):
     return token in OPERATIONS
 
 
-def evalute(rpn_expression) -> float:
+def evaluate(rpn_expression) -> float:
     """
     function evaluating expression in RPN form
     in:list of operations and arguments in RPN
     out: expression evaluation value
-    mutates rpn_expression argument
     """
+    rpn_expression = rpn_expression[:]
     while len(rpn_expression) != 1:
         index = 0
         while not is_operation(rpn_expression[index]):
@@ -158,6 +157,6 @@ def evalute(rpn_expression) -> float:
             arguments = (rpn_expression[index - 1])
             calculation_result = [operation_realization(*arguments)]
             rpn_expression[index - 1:index + 1] = calculation_result
-    
+
     return rpn_expression[0]
 
