@@ -41,7 +41,7 @@ def get_tokens(expression:str) -> list:
     futher work with them
     """
     tokens = []
-    
+
     for ch in expression:
         if ch in IGNORED_CHARS:
             continue
@@ -62,8 +62,11 @@ def get_tokens(expression:str) -> list:
                     tokens[-1] += '.'
                 else:
                     raise ValueError("two . is not allowed in number")
+            else:
+                tokens.append(ch)
         else:
             raise ValueError(f"{ch} is not a valid character")
+
     convert_string_numbers_to_actual_one(tokens)
     return tokens
 
@@ -104,7 +107,7 @@ def convert_to_rpn(tokens_list) -> list:
         elif is_function(token):
             pass
         elif is_operation(token):
-            while (len(operator_stack) != 0) and\
+            while len(operator_stack) != 0 and\
                   (((PRECEDENCE[operator_stack[-1]] > PRECEDENCE[token]) or\
                    (PRECEDENCE[operator_stack[-1]] == PRECEDENCE[token] and ASSOCIATIVITY[token] == "left")) and\
                   (operator_stack[-1] != "(")):
@@ -139,7 +142,7 @@ def is_operation(token):
     return token in OPERATIONS
 
 
-def evaluate(rpn_expression) -> Decimal:
+def evaluate(rpn_expression:list) -> Decimal:
     """
     function evaluating expression in RPN form
     in:list of operations and arguments in RPN
@@ -151,16 +154,19 @@ def evaluate(rpn_expression) -> Decimal:
         while not is_operation(rpn_expression[index]):
             index += 1
 
+        # after exracting arguments for some operation, algorithm replaces
+        # place where were operation and arguments with operation(*arguments)
         operation = rpn_expression[index]
         operation_realization = OPERATION_REALISATIONS[operation]
         if operation in BINARY_OPERATIONS:
             arguments = (rpn_expression[index-2],rpn_expression[index-1])
-            calculation_result = [operation_realization(*arguments)]
-            rpn_expression[index - 2: index + 1] = calculation_result
+            calculation_place = slice(index - 2,index +1)
         elif operation in UNARY_OPERATIONS:
             arguments = (rpn_expression[index - 1])
-            calculation_result = [operation_realization(*arguments)]
-            rpn_expression[index - 1:index + 1] = calculation_result
+            calculation_place = slice(index - 1,index +1)
+
+        calculation_value = [operation_realization(*arguments)]
+        rpn_expression[calculation_place] = calculation_value
 
     return rpn_expression[0]
 
