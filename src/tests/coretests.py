@@ -1,3 +1,11 @@
+if __name__ == "__main__":
+	import sys, os
+	dirname=os.path.dirname
+	path = dirname(dirname(__file__))
+	sys.path.append(path)
+	import testutil
+
+
 import core
 from . import testutil
 
@@ -77,6 +85,4 @@ def run_core_tests():
 	test_evaluator()
 
 if __name__ == "__main__":
-	import sys, os
-	os.chdir(os.path.abspath(os.path.dirname(__file__)))
-	run_tests()
+	run_core_tests()
