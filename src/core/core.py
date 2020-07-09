@@ -1,11 +1,17 @@
 """
-supported operations : +, - , *, /, (),
-integers and floating-point numbers with '.' is supported
+Core calculator module, providing logic for parsing, converting and evaluating
+expressions
+
+operations ::= + | - | * | / | ()
+float ::= [<interger part>].<floating part> 
+numbers :: = int | float
+
 operations precedence:
 1: +, -
 2: *, /
 3: ()      
 """
+
 from decimal import Decimal
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -19,7 +25,8 @@ PRECEDENCE = {'+':1,'-':1,
 
 UNARY_OPERATIONS = []
 BINARY_OPERATIONS = ['+','-','*','/']
-OPERATION_REALISATIONS = {"+":lambda x,y:x+y,
+
+OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
                           "-":lambda x,y:x-y,
                           "*":lambda x,y:x*y,
                           "/":lambda x,y:x/y}
@@ -30,8 +37,8 @@ ASSOCIATIVITY = {'+':"left",'-':"left",
 
 def get_tokens(expression:str) -> list:
     """
-    function converting expression to the list of tokens
-    for futher work with them
+    function converting expression to the list of tokens for 
+    futher work with them
     """
     tokens = []
     
@@ -63,8 +70,7 @@ def get_tokens(expression:str) -> list:
 
 def convert_string_numbers_to_actual_one(tokens_list):
     """
-    function replaces string representationg of tokens with
-    python int or float one
+    function replacing string representationg of tokens with Decimal
     """
     for index in range(len(tokens_list)):
         token = tokens_list[index]
@@ -78,7 +84,6 @@ def str_is_number(token):
     function returns True if token is str, representing number
     int or float in python format
     """
-    # function is based on restrictions of get_tokens result
     for ch in token:
         if ch not in DIGITS and ch != ".":
             return False
@@ -145,6 +150,7 @@ def evaluate(rpn_expression) -> Decimal:
         index = 0
         while not is_operation(rpn_expression[index]):
             index += 1
+
         operation = rpn_expression[index]
         operation_realization = OPERATION_REALISATIONS[operation]
         if operation in BINARY_OPERATIONS:
