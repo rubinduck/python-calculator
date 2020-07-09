@@ -68,7 +68,7 @@ def get_tokens(expression:str) -> list:
     return tokens
 
 
-def convert_string_numbers_to_actual_one(tokens_list):
+def convert_string_numbers_to_decimal(tokens_list):
     """
     function replacing string representationg of tokens with Decimal
     """
@@ -164,3 +164,6 @@ def evaluate(rpn_expression) -> Decimal:
 
     return rpn_expression[0]
 
+
+def calculate_expression(expression:str) -> Decimal:
+    return evaluate(convert_to_rpn(get_tokens(expression)))
