@@ -8,6 +8,7 @@ if __name__ == "__main__":
 
 import core
 from . import testutil
+from decimal import Decimal
 
 def test_tokenizer():
 
@@ -40,6 +41,7 @@ def test_tokenizer():
 				   (("(4*4)+4.5",),		 ['(',4,'*',4,')','+',4.5])				   				   				   
 
 	]
+	expecations = [(i,_to_decimal(j)) for i,j in expecations]
 
 	get_tokens = core.get_tokens
 	testutil.test(get_tokens,expecations)
@@ -55,6 +57,7 @@ def test_rpn_convertor():
 				   (([2,"*","(",3,"+",4,")"],),	   [2,3,4,"+","*"]),
 				   (([5,"/","(",35,"*",8.7,")"],), [5,35,8.7,"*","/"]),
 	]
+	expecations = [((_to_decimal(i[0]),),_to_decimal(j)) for i,j in expecations]
 
 	convert = core.convert_to_rpn
 	testutil.test(convert,expecations)
@@ -72,9 +75,17 @@ def test_evaluator():
 				   (([5,10,2,"/","/"],),1),
 				   (([45.8,75.3,8,6,"/","*","-"],),(-54.6)),
 				   (([-1,-1,"*"],),1,)]
+	expecations = [((_to_decimal(i[0]),),Decimal(str(j))) for i,j in expecations]
 
 	testutil.test(evaluate,expecations)
 	print("evaluator test succeded")
+
+def _to_decimal(input_list) -> list:
+	input_list = input_list[:]
+	for i in range(len(input_list)):
+		if type(input_list[i]) == int or type(input_list[i]) == float:
+			input_list[i] = Decimal(str(input_list[i]))
+	return input_list
 
 
 
