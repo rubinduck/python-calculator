@@ -6,6 +6,7 @@ operations precedence:
 2: *, /
 3: ()      
 """
+from decimal import Decimal
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
@@ -68,11 +69,8 @@ def convert_string_numbers_to_actual_one(tokens_list):
     for index in range(len(tokens_list)):
         token = tokens_list[index]
         if str_is_number(token):
-            if "." in token:
-                token = float(token)
-            else:
-                token = int(token)
-        tokens_list[index] = token
+            token = Decimal(token)
+            tokens_list[index] = token
 
            
 def str_is_number(token):
@@ -126,7 +124,7 @@ def convert_to_rpn(tokens_list) -> list:
 
 
 def is_number(token):
-    return type(token) == int or type(token) == float
+    return type(token) == Decimal
 
 def is_function(token):
     # temp mock, while there are no functions
@@ -136,7 +134,7 @@ def is_operation(token):
     return token in OPERATIONS
 
 
-def evaluate(rpn_expression) -> float:
+def evaluate(rpn_expression) -> Decimal:
     """
     function evaluating expression in RPN form
     in:list of operations and arguments in RPN
