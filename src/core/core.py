@@ -4,7 +4,7 @@ expressions
 
 operations ::= + | - | * | / | ()
 float ::= [<interger part>].<floating part> 
-numbers :: = int | float
+numbers ::= [-]<int> | <float>
 
 operations precedence:
 1: +, -
@@ -67,19 +67,32 @@ def get_tokens(expression:str) -> list:
         else:
             raise ValueError(f"{ch} is not a valid character")
 
-    convert_string_numbers_to_decimal(tokens)
+    tokens = convert_string_numbers_to_decimal(tokens)
     return tokens
 
 
 def convert_string_numbers_to_decimal(tokens_list):
     """
     function replacing string representationg of tokens with Decimal
+    and appling unary "-" operator (joining "-" to numbers) 
     """
+    tokens_list = tokens_list[:]
     for index in range(len(tokens_list)):
         token = tokens_list[index]
         if str_is_number(token):
             token = Decimal(token)
             tokens_list[index] = token
+
+    index = 0
+    while index < len(tokens_list):
+        token = tokens_list[index]
+        if (token == "-") and\
+           (index == 0 or tokens_list[index - 1] in OPERATIONS) and\
+           (type(tokens_list[index + 1]) == Decimal):
+           tokens_list[index:index+2] = [-tokens_list[index+1]]
+        index += 1
+
+    return tokens_list
 
            
 def str_is_number(token):
@@ -159,6 +172,10 @@ def evaluate(rpn_expression:list) -> Decimal:
         operation = rpn_expression[index]
         operation_realization = OPERATION_REALIZATIONS[operation]
         if operation in BINARY_OPERATIONS:
+            # without this check index - 2 can give -2 or -1 for index = 0,1
+            # but in python -2 and -1 is valid index, so we need catch it here
+            if index < 2:
+                raise ValueError(f"Binary operation {operation} wihtout enough arguments")
             arguments = (rpn_expression[index-2],rpn_expression[index-1])
             calculation_place = slice(index - 2,index +1)
         elif operation in UNARY_OPERATIONS:
