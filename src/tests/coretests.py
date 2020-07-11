@@ -80,6 +80,34 @@ def test_evaluator():
 	testutil.test(evaluate,expecations)
 	print("evaluator test succeded")
 
+def test_calculation():
+	calculate = core.calculate_expression
+
+	expecations = [("1+2",3),
+				   ("-8.5 + -5.18",-13.68),
+				   ("8.7 + -5",3.7),
+				   ("-2 - -3",1),
+				   ("58 - 23",35),
+				   ("58 - - 23",81),
+				   ("-5.7 - 3",-8.7),
+				   ("54*128",6912),
+				   ("-3*-4",12),
+				   ("-6.2 * 3",-18.6),
+				   ("1/2",0.5),
+				   ("-5/-8",0.625),
+				   ("-78/0.2",-390),
+				   ("78/-0.2",-390),
+				   ("0/58",0),
+				   ("2+2*2",6),
+				   ("(2+2)*2",8),
+				   ("2 + 8 / 5 * 8",14.8),
+				   ]
+
+	expecations = [(i,Decimal(str(j))) for i,j in expecations]
+
+	testutil.test(calculate,expecations,one_argument_function=True)
+	print("expression calculation test succeded")
+
 def _to_decimal(input_list) -> list:
 	input_list = input_list[:]
 	for i in range(len(input_list)):
@@ -88,12 +116,11 @@ def _to_decimal(input_list) -> list:
 	return input_list
 
 
-
-
 def run_core_tests():
 	test_tokenizer()
 	test_rpn_convertor()
 	test_evaluator()
+	test_calculation()
 
 if __name__ == "__main__":
 	run_core_tests()
