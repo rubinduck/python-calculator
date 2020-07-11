@@ -67,7 +67,7 @@ def get_tokens(expression:str) -> list:
         else:
             raise ValueError(f"{ch} is not a valid character")
 
-    convert_string_numbers_to_actual_one(tokens)
+    convert_string_numbers_to_decimal(tokens)
     return tokens
 
 
@@ -157,7 +157,7 @@ def evaluate(rpn_expression:list) -> Decimal:
         # after exracting arguments for some operation, algorithm replaces
         # place where were operation and arguments with operation(*arguments)
         operation = rpn_expression[index]
-        operation_realization = OPERATION_REALISATIONS[operation]
+        operation_realization = OPERATION_REALIZATIONS[operation]
         if operation in BINARY_OPERATIONS:
             arguments = (rpn_expression[index-2],rpn_expression[index-1])
             calculation_place = slice(index - 2,index +1)
