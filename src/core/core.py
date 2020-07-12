@@ -175,7 +175,7 @@ def evaluate(rpn_expression:list) -> Decimal:
             # without this check index - 2 can give -2 or -1 for index = 0,1
             # but in python -2 and -1 is valid index, so we need catch it here
             if index < 2:
-                raise ValueError(f"Binary operation {operation} wihtout enough arguments")
+                raise ValueError(f"Binary operation {operation} without enough arguments")
             arguments = (rpn_expression[index-2],rpn_expression[index-1])
             calculation_place = slice(index - 2,index +1)
         elif operation in UNARY_OPERATIONS:
@@ -189,4 +189,10 @@ def evaluate(rpn_expression:list) -> Decimal:
 
 
 def calculate_expression(expression:str) -> Decimal:
-    return evaluate(convert_to_rpn(get_tokens(expression)))
+    try:
+        return evaluate(convert_to_rpn(get_tokens(expression)))
+    except ValueError as ex:
+        raise IncorrectInputError(*ex.args)
+
+
+class IncorrectInputError(Exception):pass
