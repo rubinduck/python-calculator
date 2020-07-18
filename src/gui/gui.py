@@ -61,7 +61,7 @@ class GeneralControlButtonsPanel(QWidget):
 
 	def init_ui(self):
 		self.__layout = QGridLayout(self)
-		self.__layout.setSpacing(SPACE_BETWEEN_BUTTONS)
+		self.__layout.setSpacing(self.SPACE_BETWEEN_BUTTONS)
 
 
 	def set_buttons(self,button_labels:list):
