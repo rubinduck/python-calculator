@@ -8,86 +8,59 @@ from PyQt5.QtWidgets import QApplication,QMainWindow,QVBoxLayout,QWidget
 
 import gui
 
+
+class WidgetTestingContainer(QMainWindow):
+	def __init__(self,size:"(x,y,w,h)",WidgetClass,*args,widget_args=(),**kargs):
+		super().__init__(*args,**kargs)
+		self.setGeometry(*size)
+		self.place_widget(WidgetClass,widget_args)
+		self.init_ui()
+		self.show()
+
+	def place_widget(self,WidgetClass,widget_args):
+		self.content_container = QWidget(self)
+		self.setCentralWidget(self.content_container)
+
+		layout = QVBoxLayout(self.content_container)
+		self.content_container.setLayout(layout)
+
+		widget = WidgetClass(*widget_args,self.content_container)
+		self._widget = widget
+		layout.addWidget(widget)
+
+	def init_ui(self):
+		pass
+
 def test_HistoryWidget():
 	HistoryWidget = gui.HistoryWidget
 
-	class Main(QMainWindow):
-		"""
-		test class for HistoryWidget
-		"""
-		def __init__(self):
-			super().__init__()
-			self.setGeometry(200,200,500,400)
-			self.init_ui()
-			self.show()
-
+	class Main(WidgetTestingContainer):
 		def init_ui(self):
-			label = HistoryWidget(self)
+			widget = self._widget
+			widget.setText("fffffffffffffffffffffff\n" * 60)
+			widget.add_line("test")
+			widget.add_line("one more test")
+			widget.resize(150,150)	
 
-			label.setText("fffffffffffffffffffffff\n" * 15)
-			label.add_line("test")
-			label.add_line("one more test")
-
-			label.setGeometry(100, 100, 300, 150)
-
-	run_test_app(Main)
+	run_test_app(Main,(200,200,200,200),HistoryWidget)
 
 def test_MainLineWidget():
-
 	MainLineWidget = gui.MainLineWidget
-	class Main(QMainWindow):
-		"""
-		test class for MainLineWidget
-		"""
-		def __init__(self):
-			super().__init__()
-			self.setGeometry(200,200,400,50)
-			self.init_ui()
-			self.show()
-
-		def init_ui(self):
-			self.content_container = QWidget(self)
-			self.setCentralWidget(self.content_container)
-
-			layout = QVBoxLayout(self.content_container)
-			self.content_container.setLayout(layout)
-
-			widget = MainLineWidget(self.content_container)
-			layout.addWidget(widget)
-
-	run_test_app(Main)
+	run_test_app(WidgetTestingContainer,(200,200,400,50),MainLineWidget)
 
 def test_GeneralControlButtonsPanel():
 
 	GeneralControlButtonsPanel = gui.GeneralControlButtonsPanel
-	class Main(QMainWindow):
-		"""
-		test class for GeneralControlButtonsPanel
-		"""
-		def __init__(self):
-			super().__init__()
-			self.setGeometry(200,200,200,200)
-			self.init_ui()
-			self.show()
-
+	class Main(WidgetTestingContainer):
 		def init_ui(self):
-			self.content_container = QWidget(self)
-			self.setCentralWidget(self.content_container)
+			self._widget.set_buttons(["+","-","*"])
 
-			layout = QVBoxLayout(self.content_container)
-			self.content_container.setLayout(layout)
-
-			widget = GeneralControlButtonsPanel(2,self.content_container)
-			layout.addWidget(widget)
-
-			widget.set_buttons(["+","-","*"])
-
-	run_test_app(Main)
+	run_test_app(Main,(200,200,200,200),GeneralControlButtonsPanel,widget_args=(2,))
 
 
-def run_test_app(MainWindowClass):
+def run_test_app(MainWindowClass,*args,widget_args=()):
 	app = QApplication([])
-	window = MainWindowClass()
+	window = MainWindowClass(*args,widget_args=widget_args)
 	window.show()
 	app.exec()
 
