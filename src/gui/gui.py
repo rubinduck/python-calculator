@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel,QApplication,QScrollArea,QWidget,QVBoxLayout,QMainWindow
+from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,
+QWidget,QVBoxLayout,QMainWindow,QLineEdit)
 
 class ScrollableLable (QScrollArea):
 	"""
@@ -36,3 +37,7 @@ class HistoryWidget(ScrollableLable):
 	def add_line(self,new_line):
 		new_text = self.text() + "\n" + new_line
 		self.set_text(new_text)
+
+
+
+class MainLineWidget(QLineEdit):pass
