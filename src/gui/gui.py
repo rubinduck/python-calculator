@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,
-QWidget,QVBoxLayout,QMainWindow,QLineEdit)
+from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,QPushButton,
+QWidget,QVBoxLayout,QMainWindow,QLineEdit,QGridLayout,QSizePolicy)
 
 class ScrollableLable (QScrollArea):
 	"""
@@ -40,4 +40,47 @@ class HistoryWidget(ScrollableLable):
 
 
 
-class MainLineWidget(QLineEdit):pass
+class MainLineWidget(QLineEdit):
+	"""
+	Widget representing main line of calculator (line, where you enter your
+	expressions and where you get the result)
+	"""
+
+class GeneralControlButtonsPanel(QWidget):
+	"""
+	Class representing general case of control buttons grid
+	"""
+	SPACE_BETWEEN_BUTTONS = 5
+
+	def __init__(self,row_length,*args,**kargs):
+		super().__init__(*args,**kargs)
+
+		self.row_length = row_length
+		self.buttons = []
+		self.init_ui()
+
+	def init_ui(self):
+		self.__layout = QGridLayout(self)
+		self.__layout.setSpacing(SPACE_BETWEEN_BUTTONS)
+
+
+	def set_buttons(self,button_labels:list):
+		"""
+		Method sets buttons with passed labels to widget's grid,
+		in accordance with row_length.
+		New grid will be row_length x len(button_list)/row_length sized
+		"""
+
+		row_number = 0
+		column_number = 0
+		for label in button_labels:
+			if column_number == self.row_length:
+				column_number = 0
+				row_number += 1
+
+			button = QPushButton(self,text=label)
+			button.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+
+			self.buttons.append(button)
+			self.__layout.addWidget(button,row_number,column_number)
+			column_number += 1
