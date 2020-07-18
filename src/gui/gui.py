@@ -36,32 +36,3 @@ class HistoryWidget(ScrollableLable):
 	def add_line(self,new_line):
 		new_text = self.text() + "\n" + new_line
 		self.set_text(new_text)
-
-
-
-
-
-if __name__ == "__main__":
-	class Main(QMainWindow):
-		"""
-		test class for HistoryWidgetFunctionality
-		"""
-		def __init__(self):
-			super().__init__()
-			self.setGeometry(200,200,500,400)
-			self.init_ui()
-			self.show()
-
-		def init_ui(self):
-			label = HistoryWidget(self)
-
-			label.setText("fffffffffffffffffffffff\n" * 15)
-			label.add_line("test")
-			label.add_line("one more test")
-
-			label.setGeometry(100, 100, 300, 150) 
-
-	app = QApplication([])
-	window = Main()
-	window.show()
-	app.exec()
