@@ -111,6 +111,10 @@ class MainControlButtonsWidget(GeneralControlButtonsPanel):
 
 
 class CalculatorMainWindow(QMainWindow):
+	"""
+	Main window of calculator GUI
+	Includes history widget, main line and control buttons panel
+	"""
 
 	MINIMUM_WIDTH = 200
 	MINIMUM_HEIGHT = 300
