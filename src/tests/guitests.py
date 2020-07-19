@@ -10,21 +10,21 @@ import gui
 
 
 class WidgetTestingContainer(QMainWindow):
-	def __init__(self,size:"(x,y,w,h)",WidgetClass,*args,widget_args=(),**kargs):
+	def __init__(self,size:"(x,y,w,h)",WidgetClass,*args,widget_args=(),keyword_widget_args={},**kargs):
 		super().__init__(*args,**kargs)
 		self.setGeometry(*size)
-		self.place_widget(WidgetClass,widget_args)
+		self.place_widget(WidgetClass,widget_args,keyword_widget_args)
 		self.init_ui()
 		self.show()
 
-	def place_widget(self,WidgetClass,widget_args):
+	def place_widget(self,WidgetClass,widget_args,keyword_widget_args):
 		self.content_container = QWidget(self)
 		self.setCentralWidget(self.content_container)
 
 		layout = QVBoxLayout(self.content_container)
 		self.content_container.setLayout(layout)
 
-		widget = WidgetClass(*widget_args,self.content_container)
+		widget = WidgetClass(*widget_args,self.content_container,**keyword_widget_args)
 		self._widget = widget
 		layout.addWidget(widget)
 
@@ -55,12 +55,15 @@ def test_GeneralControlButtonsPanel():
 		def init_ui(self):
 			self._widget.set_buttons(["+","-","*"])
 
-	run_test_app(Main,(200,200,200,200),GeneralControlButtonsPanel,widget_args=(2,))
+	run_test_app(Main,(200,200,200,200),GeneralControlButtonsPanel,keyword_widget_args={"row_length":2})
 
+def test_MainControlButtonsWidget():
+	MainControlButtonsWidget = gui.MainControlButtonsWidget
+	run_test_app(WidgetTestingContainer,(200,200,200,200),MainControlButtonsWidget)
 
-def run_test_app(MainWindowClass,*args,widget_args=()):
+def run_test_app(MainWindowClass,*args,widget_args=(),keyword_widget_args={}):
 	app = QApplication([])
-	window = MainWindowClass(*args,widget_args=widget_args)
+	window = MainWindowClass(*args,widget_args=widget_args,keyword_widget_args=keyword_widget_args)
 	window.show()
 	app.exec()
 
@@ -68,6 +71,7 @@ def run_gui_tests():
 	test_HistoryWidget()
 	test_MainLineWidget()
 	test_GeneralControlButtonsPanel()
+	test_MainControlButtonsWidget()
 
 if __name__ == "__main__":
 	run_gui_tests()
