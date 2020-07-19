@@ -10,8 +10,8 @@ import gui
 
 
 class WidgetTestingContainer(QMainWindow):
-	def __init__(self,size:"(x,y,w,h)",WidgetClass,*args,widget_args=(),keyword_widget_args={},**kargs):
-		super().__init__(*args,**kargs)
+	def __init__(self,size:"(x,y,w,h)",WidgetClass,widget_args,keyword_widget_args):
+		super().__init__()
 		self.setGeometry(*size)
 		self.place_widget(WidgetClass,widget_args,keyword_widget_args)
 		self.init_ui()
@@ -30,6 +30,12 @@ class WidgetTestingContainer(QMainWindow):
 
 	def init_ui(self):
 		pass
+
+def run_test_app(MainWindowClass,*args,widget_args=(),keyword_widget_args={}):
+	app = QApplication([])
+	window = MainWindowClass(*args,widget_args=widget_args,keyword_widget_args=keyword_widget_args)
+	window.show()
+	app.exec()
 
 def test_HistoryWidget():
 	HistoryWidget = gui.HistoryWidget
@@ -61,11 +67,6 @@ def test_MainControlButtonsWidget():
 	MainControlButtonsWidget = gui.MainControlButtonsWidget
 	run_test_app(WidgetTestingContainer,(200,200,200,200),MainControlButtonsWidget)
 
-def run_test_app(MainWindowClass,*args,widget_args=(),keyword_widget_args={}):
-	app = QApplication([])
-	window = MainWindowClass(*args,widget_args=widget_args,keyword_widget_args=keyword_widget_args)
-	window.show()
-	app.exec()
 
 def run_gui_tests():
 	test_HistoryWidget()
