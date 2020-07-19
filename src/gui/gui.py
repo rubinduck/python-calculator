@@ -52,7 +52,7 @@ class GeneralControlButtonsPanel(QWidget):
 	"""
 	SPACE_BETWEEN_BUTTONS = 5
 
-	def __init__(self,row_length,*args,**kargs):
+	def __init__(self,*args,row_length,**kargs):
 		super().__init__(*args,**kargs)
 
 		self.row_length = row_length
@@ -60,8 +60,8 @@ class GeneralControlButtonsPanel(QWidget):
 		self.init_ui()
 
 	def init_ui(self):
-		self.__layout = QGridLayout(self)
-		self.__layout.setSpacing(self.SPACE_BETWEEN_BUTTONS)
+		self._layout = QGridLayout(self)
+		self._layout.setSpacing(self.SPACE_BETWEEN_BUTTONS)
 
 
 	def set_buttons(self,button_labels:list):
@@ -78,9 +78,31 @@ class GeneralControlButtonsPanel(QWidget):
 				column_number = 0
 				row_number += 1
 
-			button = QPushButton(self,text=label)
-			button.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-
-			self.buttons.append(button)
-			self.__layout.addWidget(button,row_number,column_number)
+			self.add_button(label,row_number,column_number)
 			column_number += 1
+
+	def add_button(self,button_name:str,*position):
+		"""
+		Method adding buttons with labeled button_name, using 
+		*position agruments to addWidget method of QLayout
+		position: (row,column) or (row,column,rowSpan,columnSpan)
+		"""
+		button = QPushButton(self,text=button_name)
+		button.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+		self.buttons.append(button)
+		self._layout.addWidget(button,*position)
+
+class MainControlButtonsWidget(GeneralControlButtonsPanel):
+	"""
+	Widget with main control buttons of calulator
+	"""
+	BUTTON_LABELS = ['7','8','9','(',')',
+	                 '4','5','6','+','C',
+	                 '1','2','3','-','',
+	                 '0','.','/','*','']
+
+	def __init__(self,*args,**kargs):
+		super().__init__(*args,row_length=5,**kargs)
+
+		self.set_buttons(self.BUTTON_LABELS)
+		self.add_button("⏎",2,4,2,1)
