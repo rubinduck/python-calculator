@@ -89,8 +89,10 @@ class GeneralControlButtonsPanel(QWidget):
 		"""
 		button = QPushButton(self,text=button_name)
 		button.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
+
 		self.buttons.append(button)
 		self._layout.addWidget(button,*position)
+
 
 class MainControlButtonsWidget(GeneralControlButtonsPanel):
 	"""
@@ -106,3 +108,40 @@ class MainControlButtonsWidget(GeneralControlButtonsPanel):
 
 		self.set_buttons(self.BUTTON_LABELS)
 		self.add_button("⏎",2,4,2,1)
+
+
+class CalculatorMainWindow(QMainWindow):
+
+	MINIMUM_WIDTH = 200
+	MINIMUM_HEIGHT = 300
+	WIDGET_SPACING = 5
+
+	def __init__(self,*args,**kargs):
+		super().__init__(*args,**kargs)
+		self.init_ui()
+
+	def init_ui(self):
+		self.setMinimumSize(self.MINIMUM_WIDTH,self.MINIMUM_HEIGHT)
+
+		self.add_content_container()
+		self._layout.setSpacing(self.WIDGET_SPACING)
+
+		content_container = self.content_container
+
+		history_widget = HistoryWidget(content_container)
+		main_line_widget = MainLineWidget(content_container)
+		main_controls_widget = MainControlButtonsWidget(content_container)
+
+		for widget in [history_widget,main_line_widget,main_controls_widget]:
+			widget.setMinimumSize(0,0)
+			self._layout.addWidget(widget)
+
+	def add_content_container(self):
+		"""
+		Method creating container for all other widgets and VBOX layout for it
+		"""
+		self.content_container = QWidget(self)
+		self.setCentralWidget(self.content_container)
+
+		self._layout = QVBoxLayout(self.content_container)
+		self.content_container.setLayout(self._layout)
