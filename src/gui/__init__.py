@@ -1,1 +1,1 @@
-from .gui import *
+from .guiwidgets import *

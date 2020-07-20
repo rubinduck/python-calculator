@@ -114,7 +114,7 @@ class MainControlButtonsWidget(GeneralControlButtonsPanel):
 		self.add_button("⏎",2,4,2,1)
 
 
-class CalculatorMainWindow(QMainWindow):
+class CalculatorMainWindowGui(QMainWindow):
 	"""
 	Main window of calculator GUI
 	Includes history widget, main line and control buttons panel

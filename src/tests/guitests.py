@@ -68,9 +68,9 @@ def test_MainControlButtonsWidget():
 	run_test_app(WidgetTestingContainer,(200,200,200,200),MainControlButtonsWidget)
 
 def test_CalculatorMainWindow():
-	CalculatorMainWindow = gui.CalculatorMainWindow
+	CalculatorMainWindowGui = gui.CalculatorMainWindowGui
 	app = QApplication([])
-	window = CalculatorMainWindow()
+	window = CalculatorMainWindowGui()
 	window.resize(window.minimumSize())
 	window.show()
 	app.exec()
