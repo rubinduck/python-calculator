@@ -71,6 +71,7 @@ def test_CalculatorMainWindow():
 	CalculatorMainWindow = gui.CalculatorMainWindow
 	app = QApplication([])
 	window = CalculatorMainWindow()
+	window.resize(window.minimumSize())
 	window.show()
 	app.exec()
 
