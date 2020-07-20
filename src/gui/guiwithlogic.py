@@ -1,3 +1,7 @@
+"""
+Module conating unification of GUI and it's logic
+"""
+
 from PyQt5.QtCore import Qt
 
 from .guiwidgets import CalculatorMainWindowGui
@@ -14,6 +18,10 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 		self.set_input_focus()
 
 	def set_input_focus(self):
+		"""
+		Method creating behavior,where keyboard inputs goes to main line widget
+		of calculator
+		"""
 		main_line_widget = self._widgets["main_line"]
 		main_line_widget.setFocus(Qt.OtherFocusReason)
 
