@@ -67,7 +67,7 @@ def test_MainControlButtonsWidget():
 	MainControlButtonsWidget = gui.MainControlButtonsWidget
 	run_test_app(WidgetTestingContainer,(200,200,200,200),MainControlButtonsWidget)
 
-def test_CalculatorMainWindow():
+def test_CalculatorMainWindowGui():
 	CalculatorMainWindowGui = gui.CalculatorMainWindowGui
 	app = QApplication([])
 	window = CalculatorMainWindowGui()
@@ -75,12 +75,20 @@ def test_CalculatorMainWindow():
 	window.show()
 	app.exec()
 
+def test_CalculatorMainWindow():
+	CalculatorMainWindow = gui.CalculatorMainWindow
+	app = QApplication([])
+	window = CalculatorMainWindow()
+	window.resize(window.minimumSize())
+	window.show()
+	app.exec()
 
 def run_gui_tests():
 	test_HistoryWidget()
 	test_MainLineWidget()
 	test_GeneralControlButtonsPanel()
 	test_MainControlButtonsWidget()
+	test_CalculatorMainWindowGui()
 	test_CalculatorMainWindow()
 
 if __name__ == "__main__":
