@@ -126,6 +126,7 @@ class CalculatorMainWindowGui(QMainWindow):
 
 	def __init__(self,*args,**kargs):
 		super().__init__(*args,**kargs)
+		self._widgets = {}
 		self.init_ui()
 
 	def init_ui(self):
@@ -139,6 +140,10 @@ class CalculatorMainWindowGui(QMainWindow):
 		history_widget = HistoryWidget(content_container)
 		main_line_widget = MainLineWidget(content_container)
 		main_controls_widget = MainControlButtonsWidget(content_container)
+
+		self._widgets["history"] = history_widget
+		self._widgets["main_line"] = main_line_widget
+		self._widgets["main_controls"] = main_controls_widget
 
 		for widget in [history_widget,main_line_widget,main_controls_widget]:
 			widget.setMinimumSize(0,0)
