@@ -1,3 +1,7 @@
+"""
+Module conating graphical parts of calculator GUI, without logic
+"""
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,QPushButton,
 QWidget,QVBoxLayout,QMainWindow,QLineEdit,QGridLayout,QSizePolicy)
