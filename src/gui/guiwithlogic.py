@@ -53,5 +53,6 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 			# TODO error handling
 			print(ex)
 			return
+		result = result.normalize()
 		self._widgets["history"].add_line(f"{expression}={result}")
-		self._widgets["main_line"].setText(str(result))
+		self._widgets["main_line"].setText(f"{result}")
