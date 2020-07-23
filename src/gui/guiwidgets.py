@@ -3,6 +3,7 @@ Module conating graphical parts of calculator GUI, without logic
 """
 
 from PyQt5.QtCore import Qt
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,QPushButton,
 QWidget,QVBoxLayout,QMainWindow,QLineEdit,QGridLayout,QSizePolicy)
 
@@ -49,6 +50,16 @@ class MainLineWidget(QLineEdit):
 	Widget representing main line of calculator (line, where you enter your
 	expressions and where you get the result)
 	"""
+	def keyPressEvent(self,event):
+		"""
+		Method extending original keyPressEvent
+		allows to copy all text in line if no text is selected
+		"""
+		if event.matches(QtGui.QKeySequence.Copy) and not self.hasSelectedText():
+			QApplication.clipboard().setText(self.text())
+			return
+		super().keyPressEvent(event)
+
 
 class GeneralControlButtonsPanel(QWidget):
 	"""
