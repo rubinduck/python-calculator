@@ -12,18 +12,23 @@ operations precedence:
 3: ()      
 """
 
+import string
 from decimal import Decimal
+from math import sin,cos,tan,asin,acos,atan
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
+FUNCTIONS = ["sin","cos","tan","asin","acos","atan"]
 OPERATIONS = ['+','-','*','/']
 IGNORED_CHARS = [' ']
 
 PRECEDENCE = {'+':1,'-':1,
               '*':2,'/':2,
-              "(":3,")":3}
+              "(":3,")":3,
+              **dict.fromkeys(FUNCTIONS,4)}
 
-UNARY_OPERATIONS = []
+
+UNARY_OPERATIONS = FUNCTIONS[:]
 BINARY_OPERATIONS = ['+','-','*','/']
 
 OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
@@ -32,7 +37,8 @@ OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
                           "/":lambda x,y:x/y}
 
 ASSOCIATIVITY = {'+':"left",'-':"left",
-                 '*':"left",'/':"left"}
+                 '*':"left",'/':"left",
+                 **dict.fromkeys(FUNCTIONS,"right")}
  
 
 def get_tokens(expression:str) -> list:
@@ -62,6 +68,13 @@ def get_tokens(expression:str) -> list:
                     tokens[-1] += '.'
                 else:
                     raise ValueError("two . is not allowed in number")
+            else:
+                tokens.append(ch)
+        elif ch in string.ascii_lowercase:
+            if len(tokens) == 0:
+                tokens.append(ch)
+            elif tokens[-1][-1] in string.ascii_lowercase:
+                tokens[-1] += ch
             else:
                 tokens.append(ch)
         else:
@@ -111,6 +124,7 @@ def convert_to_rpn(tokens_list) -> list:
     function converting list of tokens to expression in Reverse Polish Nonation
     using Shunting-yard algorithm
     """
+    tokens_list = tokens_list[:]
     output_list = []
     operator_stack = []
     while len(tokens_list) != 0:
@@ -118,7 +132,7 @@ def convert_to_rpn(tokens_list) -> list:
         if is_number(token):
             output_list.append(token)
         elif is_function(token):
-            pass
+            operator_stack.append(token)
         elif is_operation(token):
             while len(operator_stack) != 0 and\
                   (((PRECEDENCE[operator_stack[-1]] > PRECEDENCE[token]) or\
@@ -148,8 +162,7 @@ def is_number(token):
     return type(token) == Decimal
 
 def is_function(token):
-    # temp mock, while there are no functions
-    return False
+    return token in FUNCTIONS
 
 def is_operation(token):
     return token in OPERATIONS
