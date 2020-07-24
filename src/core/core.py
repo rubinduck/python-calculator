@@ -3,6 +3,7 @@ Core calculator module, providing logic for parsing, converting and evaluating
 expressions
 
 operations ::= + | - | * | / | ()
+functions ::= sin | cos | tan | asin | acos | atan| sqrt
 float ::= [<interger part>].<floating part> 
 numbers ::= [-]<int> | <float>
 
@@ -14,11 +15,11 @@ operations precedence:
 
 import string
 from decimal import Decimal
-from math import sin,cos,tan,asin,acos,atan
+from math import sin,cos,tan,asin,acos,atan,sqrt
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
-FUNCTIONS = ["sin","cos","tan","asin","acos","atan"]
+FUNCTIONS = ["sin","cos","tan","asin","acos","atan","sqrt"]
 OPERATIONS = ['+','-','*','/']
 IGNORED_CHARS = [' ']
 
@@ -40,7 +41,8 @@ OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
                           "tan":lambda x:Decimal(str(tan(x))),
                           "asin":lambda x:Decimal(str(asin(x))),
                           "acos":lambda x:Decimal(str(acos(x))),
-                          "atan":lambda x:Decimal(str(atan(x)))}
+                          "atan":lambda x:Decimal(str(atan(x))),
+                          "sqrt":lambda x:Decimal(str(sqrt(x)))}
 
 ASSOCIATIVITY = {'+':"left",'-':"left",
                  '*':"left",'/':"left",
