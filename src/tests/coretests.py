@@ -70,7 +70,11 @@ def test_rpn_convertor():
 
 
 def test_evaluator():
-	evaluate = core.evaluate
+	# wrapper is used becouse python support only float with 16 digits after .
+	# at least is seams so
+	def evaluate_wrapper(*args,**kargs):
+		return round(core.evaluate(*args,**kargs),17)
+	evaluate = evaluate_wrapper
 
 	expecations = [(([2,2,"+"],),4),
 				   (([5,3,"-"],),2),
@@ -78,14 +82,22 @@ def test_evaluator():
 				   (([2,2,2,"+","*"],),8),
 				   (([5,10,2,"/","/"],),1),
 				   (([45.8,75.3,8,6,"/","*","-"],),(-54.6)),
-				   (([-1,-1,"*"],),1,)]
+				   (([-1,-1,"*"],),1,),
+				   (([5,"sin"],),-0.95892427466313846889),
+				   ((([5,7,"*","atan"],),1.54223266895613662476)),
+				   (([3.3,"cos",7,5,"+","/"],),-0.0822899808257387403280492542)
+				   ]
 	expecations = [((_to_decimal(i[0]),),Decimal(str(j))) for i,j in expecations]
 
 	testutil.test(evaluate,expecations)
 	print("evaluator test succeded")
 
 def test_calculation():
-	calculate = core.calculate_expression
+	# wrapper is used becouse python support only float with 16 digits after .
+	# at least is seams so
+	def calculate_wrapper(*args,**kargs):
+		return round(core.calculate_expression(*args,**kargs),17)
+	calculate = calculate_wrapper
 
 	expecations = [("1+2",3),
 				   ("-8.5 + -5.18",-13.68),
@@ -105,6 +117,8 @@ def test_calculation():
 				   ("2+2*2",6),
 				   ("(2+2)*2",8),
 				   ("2 + 8 / 5 * 8",14.8),
+				   ("5*cos(44)+7.34",12.33921654323845610034504508318928015915829569759546),
+				   ("8/5+acos(1)",1.6),
 				   ]
 
 	expecations = [(i,Decimal(str(j))) for i,j in expecations]
