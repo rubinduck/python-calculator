@@ -34,7 +34,13 @@ BINARY_OPERATIONS = ['+','-','*','/']
 OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
                           "-":lambda x,y:x-y,
                           "*":lambda x,y:x*y,
-                          "/":lambda x,y:x/y}
+                          "/":lambda x,y:x/y,
+                          "sin":lambda x:Decimal(str(sin(x))),
+                          "cos":lambda x:Decimal(str(cos(x))),
+                          "tan":lambda x:Decimal(str(tan(x))),
+                          "asin":lambda x:Decimal(str(asin(x))),
+                          "acos":lambda x:Decimal(str(acos(x))),
+                          "atan":lambda x:Decimal(str(atan(x)))}
 
 ASSOCIATIVITY = {'+':"left",'-':"left",
                  '*':"left",'/':"left",
@@ -177,7 +183,7 @@ def evaluate(rpn_expression:list) -> Decimal:
     rpn_expression = rpn_expression[:]
     while len(rpn_expression) != 1:
         index = 0
-        while not is_operation(rpn_expression[index]):
+        while not (is_operation(rpn_expression[index]) or is_function(rpn_expression[index])):
             index += 1
 
         # after exracting arguments for some operation, algorithm replaces
@@ -192,7 +198,7 @@ def evaluate(rpn_expression:list) -> Decimal:
             arguments = (rpn_expression[index-2],rpn_expression[index-1])
             calculation_place = slice(index - 2,index +1)
         elif operation in UNARY_OPERATIONS:
-            arguments = (rpn_expression[index - 1])
+            arguments = [(rpn_expression[index - 1])]
             calculation_place = slice(index - 1,index +1)
 
         calculation_value = [operation_realization(*arguments)]
