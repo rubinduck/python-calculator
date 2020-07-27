@@ -19,9 +19,12 @@ from decimal import Decimal
 from math import sin,cos,tan,asin,acos,atan,sqrt
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
-FUNCTIONS = ["sin","cos","tan","asin","acos","atan","sqrt"]
+NUMBER_CHARS = DIGITS + ["."]
+
 OPERATIONS = ['+','-','*','/']
+FUNCTIONS = ["sin","cos","tan","asin","acos","atan","sqrt"]
+
+ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
 IGNORED_CHARS = [' ']
 
 PRECEDENCE = {'+':1,'-':1,
@@ -122,10 +125,9 @@ def str_is_number(token):
     function returns True if token is str, representing number
     int or float in python format
     """
-    for ch in token:
-        if ch not in DIGITS and ch != ".":
-            return False
-    return True
+    if token.count('.') > 1:
+        return False
+    return all(map(lambda ch: ch in NUMBER_CHARS,token))
 
 
 def convert_to_rpn(tokens_list) -> list:
