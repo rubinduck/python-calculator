@@ -65,23 +65,13 @@ def get_tokens(expression:str) -> list:
             continue
         elif ch in ONE_CHARACTER_TOKENS:
             tokens.append(ch)
-        elif ch in DIGITS:
-            if len(tokens) == 0:
+        elif ch in NUMBER_CHARS:
+            if len(tokens) == 0 or not str_is_number(tokens[-1]):
                 tokens.append(ch)
-            elif tokens[-1][-1] in DIGITS or tokens[-1][-1] == '.':
+            elif ch == '.' and ch in tokens[-1]:
+                raise ValueError("can't have two '.' in number")
+            else:
                 tokens[-1] += ch
-            else:
-                tokens.append(ch)
-        elif ch == '.':
-            if len(tokens) == 0:
-                tokens.append(ch)
-            elif tokens[-1][-1] in DIGITS:
-                if '.' not in tokens[-1]:
-                    tokens[-1] += '.'
-                else:
-                    raise ValueError("two . is not allowed in number")
-            else:
-                tokens.append(ch)
         elif ch in string.ascii_lowercase:
             if len(tokens) == 0:
                 tokens.append(ch)
