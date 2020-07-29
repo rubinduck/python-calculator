@@ -2,7 +2,7 @@
 Module conating graphical parts of calculator GUI, without logic
 """
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSignal,pyqtSlot
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import (QLabel,QApplication,QScrollArea,QPushButton,
 QWidget,QVBoxLayout,QMainWindow,QLineEdit,QGridLayout,QSizePolicy)
@@ -117,13 +117,42 @@ class MainControlButtonsWidget(GeneralControlButtonsPanel):
 	                 '4','5','6','+','C',
 	                 '1','2','3','-','',
 	                 '0','.','/','*','']
+	ENTER_CHAR_BUTTONS = ['0', '1', '2', '3', '4',
+	                      '5', '6', '7', '8', '9',
+	                      '(',')','.','+','-','/',
+	                      "*"]
+
+	enter_char = pyqtSignal(str)
+	clear = pyqtSignal()
+	carriage = pyqtSignal()
 
 	def __init__(self,*args,**kargs):
 		super().__init__(*args,row_length=5,**kargs)
 
 		self.set_buttons(self.BUTTON_LABELS)
 		self.add_button("⏎",2,4,2,1)
+		self.set_up_signals()
 
+	def set_up_signals(self):
+		for button_name in self.buttons:
+			if button_name in self.ENTER_CHAR_BUTTONS:
+				self.buttons[button_name].clicked.connect(self._emit_enter_char)
+
+		self.buttons["C"].clicked.connect(self._emit_clear)
+		self.buttons["⏎"].clicked.connect(self._emit_carriage)
+
+
+	@pyqtSlot()
+	def _emit_enter_char(self):
+		self.enter_char.emit(self.sender().text())
+
+	@pyqtSlot()
+	def _emit_clear(self):
+		self.clear.emit()
+
+	@pyqtSlot()
+	def _emit_carriage(self):
+		self.carriage.emit()
 
 class CalculatorMainWindowGui(QMainWindow):
 	"""
