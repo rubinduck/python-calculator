@@ -33,7 +33,7 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 				widget.setFocusProxy(main_line_widget)
 				widget.setFocusPolicy(Qt.NoFocus)
 
-		for widget in self._widgets["main_controls"].buttons:
+		for widget in self._widgets["main_controls"].buttons.values():
 			widget.setFocusProxy(main_line_widget)
 			widget.setFocusPolicy(Qt.NoFocus)
 
