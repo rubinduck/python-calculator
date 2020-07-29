@@ -71,7 +71,7 @@ class GeneralControlButtonsPanel(QWidget):
 		super().__init__(*args,**kargs)
 
 		self.row_length = row_length
-		self.buttons = []
+		self.buttons = {}
 		self.init_ui()
 
 	def init_ui(self):
@@ -105,7 +105,7 @@ class GeneralControlButtonsPanel(QWidget):
 		button = QPushButton(self,text=button_name)
 		button.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
 
-		self.buttons.append(button)
+		self.buttons[button_name] = button
 		self._layout.addWidget(button,*position)
 
 
