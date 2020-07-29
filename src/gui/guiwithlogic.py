@@ -18,6 +18,7 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 	def init_logic(self):
 		self.setup_input_focus()
 		self.setup_calculation_logic()
+		self.setup_buttons_work()
 
 	def setup_input_focus(self):
 		"""
@@ -39,6 +40,23 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 
 	def setup_calculation_logic(self):
 		self._widgets["main_line"].returnPressed.connect(self.calculate)
+
+	def setup_buttons_work(self):
+		"""function connecting buttons signals to slots"""
+		main_controls = self._widgets["main_controls"]
+		main_controls.enter_char.connect(self.enter_char)
+		main_controls.clear.connect(self.clear)
+		main_controls.carriage.connect(self.calculate)
+
+	@pyqtSlot(str)
+	def enter_char(self,value:str):
+		"""slot adding char to main line"""
+		main_line = self._widgets["main_line"]
+		main_line.setText(main_line.text() + value)
+
+	@pyqtSlot()
+	def clear(self):
+		self._widgets["main_line"].setText('')
 
 	@pyqtSlot()
 	def calculate(self,*args,**kargs):
