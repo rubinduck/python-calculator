@@ -15,6 +15,7 @@ operations precedence:
 """
 
 import string
+import decimal
 from decimal import Decimal
 from math import sin,cos,tan,asin,acos,atan,sqrt
 
@@ -207,6 +208,8 @@ def calculate_expression(expression:str) -> Decimal:
         return evaluate(convert_to_rpn(get_tokens(expression)))
     except ValueError as ex:
         raise IncorrectInputError(*ex.args)
+    except decimal.DivisionByZero as ex:
+        raise IncorrectInputError("can't divide by zero")
 
 
 class IncorrectInputError(Exception):pass
