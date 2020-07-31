@@ -177,6 +177,11 @@ def evaluate(rpn_expression:list) -> Decimal:
     out: expression evaluation value
     """
     rpn_expression = rpn_expression[:]
+
+    # for the one char and simular cases. For examle '('
+    if len(rpn_expression) == 1 and not isinstance(rpn_expression[0],Decimal):
+        raise IncorrectInputError("incorrect input")
+
     while len(rpn_expression) != 1:
         index = 0
         while not (is_operation(rpn_expression[index]) or is_function(rpn_expression[index])):
