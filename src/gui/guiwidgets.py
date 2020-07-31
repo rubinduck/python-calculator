@@ -44,6 +44,12 @@ class HistoryWidget(ScrollableLable):
 		self.set_text(new_text)
 
 
+class ErrorMessageWidget(QLabel):
+	"""
+	class represinting line with error message shown
+	to user
+	"""
+	pass
 
 class MainLineWidget(QLineEdit):
 	"""
@@ -178,16 +184,20 @@ class CalculatorMainWindowGui(QMainWindow):
 		content_container = self.content_container
 
 		history_widget = HistoryWidget(content_container)
+		eror_widget = ErrorMessageWidget()
 		main_line_widget = MainLineWidget(content_container)
 		main_controls_widget = MainControlButtonsWidget(content_container)
 
 		self._widgets["history"] = history_widget
+		self._widgets["error_message"] = eror_widget
 		self._widgets["main_line"] = main_line_widget
 		self._widgets["main_controls"] = main_controls_widget
 
-		for widget in [history_widget,main_line_widget,main_controls_widget]:
+		for widget in self._widgets.values():
 			widget.setMinimumSize(0,0)
 			self._layout.addWidget(widget)
+
+		eror_widget.hide()
 
 	def add_content_container(self):
 		"""
