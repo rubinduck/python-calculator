@@ -56,11 +56,15 @@ class MainLineWidget(QLineEdit):
 	Widget representing main line of calculator (line, where you enter your
 	expressions and where you get the result)
 	"""
+
+	key_press_signal = pyqtSignal()
+
 	def keyPressEvent(self,event):
 		"""
 		Method extending original keyPressEvent
 		allows to copy all text in line if no text is selected
 		"""
+		self.key_press_signal.emit()
 		if event.matches(QtGui.QKeySequence.Copy) and not self.hasSelectedText():
 			QApplication.clipboard().setText(self.text())
 			return

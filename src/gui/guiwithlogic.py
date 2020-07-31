@@ -67,10 +67,33 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 		expression = self._widgets["main_line"].text()
 		try:
 			result = calculate_expression(expression)
+			print(result)
 		except IncorrectInputError as ex:
-			# TODO error handling
-			print(ex)
+			self.show_error_message(ex)
 			return
 		result = result.normalize()
 		self._widgets["history"].add_line(f"{expression}={result}")
 		self._widgets["main_line"].setText(f"{result}")
+
+	def show_error_message(self,ex:Exception):
+		"""
+		method for displaying error message and adding slots to hide it after
+		key or button is pressed
+		"""
+		text = ex.args[0]
+		error_widget = self._widgets["error_message"]
+		error_widget.setText(text)
+		error_widget.show()
+
+		self._widgets["main_line"].key_press_signal.connect(self.hide_error_message)
+		self._widgets["main_controls"].enter_char.connect(self.hide_error_message)
+		self._widgets["main_controls"].clear.connect(self.hide_error_message)
+
+
+	@pyqtSlot()
+	def hide_error_message(self):
+		"""method hiding error widget and disconecting itself from input slots"""
+		self._widgets["error_message"].hide()
+		self._widgets["main_line"].key_press_signal.disconnect(self.hide_error_message)
+		self._widgets["main_controls"].enter_char.disconnect(self.hide_error_message)
+		self._widgets["main_controls"].clear.disconnect(self.hide_error_message)
