@@ -2,7 +2,7 @@
 Core calculator module, providing logic for parsing, converting and evaluating
 expressions
 
-operations ::= + | - | * | / | ()
+operations ::= + | - | * | / | () | ^
 functions ::= sin | cos | tan | asin | acos | atan| sqrt
 float ::= [<interger part>].<floating part> 
 numbers ::= [-]<int> | <float>
@@ -22,25 +22,26 @@ from math import sin,cos,tan,asin,acos,atan,sqrt
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 NUMBER_CHARS = DIGITS + ["."]
 
-OPERATIONS = ['+','-','*','/']
+OPERATIONS = ['+','-','*','/','^']
 FUNCTIONS = ["sin","cos","tan","asin","acos","atan","sqrt"]
 
-ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')']
+ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')','^']
 IGNORED_CHARS = [' ']
 
 PRECEDENCE = {'+':1,'-':1,
-              '*':2,'/':2,
+              '*':2,'/':2,'^':2,
               "(":3,")":3,
               **dict.fromkeys(FUNCTIONS,4)}
 
 
 UNARY_OPERATIONS = FUNCTIONS[:]
-BINARY_OPERATIONS = ['+','-','*','/']
+BINARY_OPERATIONS = ['+','-','*','/','^']
 
 OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
                           "-":lambda x,y:x-y,
                           "*":lambda x,y:x*y,
                           "/":lambda x,y:x/y,
+                          '^':lambda x,y:x**y,
                           "sin":lambda x:Decimal(str(sin(x))),
                           "cos":lambda x:Decimal(str(cos(x))),
                           "tan":lambda x:Decimal(str(tan(x))),
@@ -51,6 +52,7 @@ OPERATION_REALIZATIONS = {"+":lambda x,y:x+y,
 
 ASSOCIATIVITY = {'+':"left",'-':"left",
                  '*':"left",'/':"left",
+                 '^':"left",
                  **dict.fromkeys(FUNCTIONS,"right")}
  
 
