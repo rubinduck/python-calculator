@@ -18,12 +18,14 @@ class ScrollableLable (QScrollArea):
 		self.setWidgetResizable(True)
 
 		content_container = QWidget(self)
+		self.content_container = content_container
 		layout = QVBoxLayout(content_container)
 		self.label = QLabel(content_container)
 
 		layout.addWidget(self.label)
 		content_container.setLayout(layout)
 		self.setWidget(content_container)
+
 
 	def __getattr__(self,name):
 		return getattr(self.label,name)
@@ -43,6 +45,9 @@ class HistoryWidget(ScrollableLable):
 		new_text = self.text() + "\n" + new_line
 		self.set_text(new_text)
 
+		# autoscroll to bottom of history to see latest result
+		self.verticalScrollBar().setMaximum(self.content_container.sizeHint().height())
+		self.verticalScrollBar().setSliderPosition(self.content_container.sizeHint().height())
 
 class ErrorMessageWidget(QLabel):
 	"""

@@ -67,7 +67,6 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 		expression = self._widgets["main_line"].text()
 		try:
 			result = calculate_expression(expression)
-			print(result)
 		except IncorrectInputError as ex:
 			self.show_error_message(ex)
 			return
@@ -88,7 +87,6 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
 		self._widgets["main_line"].key_press_signal.connect(self.hide_error_message)
 		self._widgets["main_controls"].enter_char.connect(self.hide_error_message)
 		self._widgets["main_controls"].clear.connect(self.hide_error_message)
-
 
 	@pyqtSlot()
 	def hide_error_message(self):
