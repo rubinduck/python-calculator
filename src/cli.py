@@ -1,5 +1,10 @@
-from argparse import ArgumentParser,RawTextHelpFormatter
+"""
+Module allowing calculate expression in cli
+to call: python cli.py expression
+"""
 
+
+from argparse import ArgumentParser,RawTextHelpFormatter
 
 import core
 
