@@ -6,6 +6,7 @@ operations ::= + | - | * | / | () | ^
 functions ::= sin | cos | tan | asin | acos | atan| sqrt
 float ::= [<interger part>].<floating part> 
 numbers ::= [-]<int> | <float>
+constantas ::= pi | e
 
 operations precedence:
 1: +, -
@@ -18,12 +19,15 @@ import string
 import decimal
 from decimal import Decimal
 from math import sin,cos,tan,asin,acos,atan,sqrt
+from math import pi,e
 
 DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 NUMBER_CHARS = DIGITS + ["."]
 
 OPERATIONS = ['+','-','*','/','^']
 FUNCTIONS = ["sin","cos","tan","asin","acos","atan","sqrt"]
+CONSTANTS = {"pi":Decimal(str(pi)),
+             "e":Decimal(str(e))}
 
 ONE_CHARACTER_TOKENS = ['+','-','*','/','(',')','^']
 IGNORED_CHARS = [' ']
@@ -86,10 +90,11 @@ def get_tokens(expression:str) -> list:
             raise ValueError(f"{ch} is not a valid character")
 
     tokens = convert_string_numbers_to_decimal(tokens)
+    tokens = place_constants(tokens)
     return tokens
 
 
-def convert_string_numbers_to_decimal(tokens_list):
+def convert_string_numbers_to_decimal(tokens_list:list) -> list:
     """
     function replacing string representationg of tokens with Decimal
     and appling unary "-" operator (joining "-" to numbers) 
@@ -122,6 +127,13 @@ def str_is_number(token):
         return False
     return all(map(lambda ch: ch in NUMBER_CHARS,token))
 
+def place_constants(tokens:list) -> list:
+    """function replacing CONSTANTS in tokens with their values"""
+    tokens = tokens[:]
+    for i in range(len(tokens)):
+        if tokens[i] in CONSTANTS:
+            tokens[i] = CONSTANTS[tokens[i]]
+    return tokens
 
 def convert_to_rpn(tokens_list) -> list:
     """
