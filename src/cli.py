@@ -28,6 +28,7 @@ def main():
 def process_expression(expression):
     try:
         result = core.calculate_expression(expression)
+        result = core.format_decimal(result)
         print(f"{expression} = {result}")
     except core.IncorrectInputError as ex:
         print("Some of input was incorrect")

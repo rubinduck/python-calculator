@@ -235,6 +235,16 @@ def calculate_expression(expression: str) -> Decimal:
     except decimal.DivisionByZero as ex:
         raise IncorrectInputError("can't divide by zero")
 
+def format_decimal(result: Decimal,digits_amount: int=16) -> str:
+    """
+    function formating calculation result to normal looking string
+    """
+    result = round(result,digits_amount)
+    result = str(result)
+    result = result.rstrip('0') if '.' in result else result
+    result = result.rstrip('.')
+    return result
+
 
 class IncorrectInputError(Exception):
     pass

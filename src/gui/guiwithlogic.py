@@ -5,7 +5,7 @@ Module conating unification of GUI and it's logic
 from PyQt5.QtCore import Qt, pyqtSlot
 
 from .guiwidgets import CalculatorMainWindowGui
-from core import calculate_expression, IncorrectInputError
+from core import calculate_expression, format_decimal, IncorrectInputError
 
 
 class CalculatorMainWindow(CalculatorMainWindowGui):
@@ -71,7 +71,8 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
         except IncorrectInputError as ex:
             self.show_error_message(ex)
             return
-        result = result.normalize()
+
+        result = format_decimal(result)
         self._widgets["history"].add_line(f"{expression}={result}")
         self._widgets["main_line"].setText(f"{result}")
 

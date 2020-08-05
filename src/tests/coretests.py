@@ -130,6 +130,23 @@ def test_calculation():
     print("expression calculation test succeded")
 
 
+
+def test_formating():
+  format = core.format_decimal
+  expecations = [
+                 (Decimal("0.10000000"),"0.1"),
+                 (Decimal("-5435943.4395439000"),"-5435943.4395439"),
+                 (Decimal("4.0000"),"4"),
+                 (Decimal("439584390.000000"),"439584390"),
+
+                 (Decimal("43543.43534522452645645"),str(Decimal("43543.4353452245264564"))),
+                 (Decimal("0.34593487594375943875943"),str(Decimal("0.3459348759437594")))
+  ]
+
+  testutil.test(format, expecations, one_argument_function=True)
+  print("formating test succeded")
+
+
 def _to_decimal(input_list) -> list:
     input_list = input_list[:]
     for i in range(len(input_list)):
@@ -143,6 +160,7 @@ def run_core_tests():
     test_rpn_convertor()
     test_evaluator()
     test_calculation()
+    test_formating()
 
 
 if __name__ == "__main__":
