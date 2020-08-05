@@ -20,6 +20,8 @@ import string
 import decimal
 
 from decimal import Decimal
+from enum import Enum
+from typing import Tuple
 from math import sin, cos, tan, asin, acos, atan, sqrt
 from math import pi, e
 
@@ -62,81 +64,169 @@ ASSOCIATIVITY = {'+': "left", '-': "left",
                  **dict.fromkeys(FUNCTIONS, "right")}
 
 
+class ExpressionIterator():
+    def __init__(self,expression):
+        self.expression = expression
+        self.iteration_index = 0
+
+    def has_next(self):
+        return self.iteration_index < len(self.expression)
+
+    def next(self):
+        value = self.expression[self.iteration_index]
+        self.iteration_index += 1
+        return value
+
+    def previous(self):
+        self.iteration_index -= 1
+        return self.expression[self.iteration_index]
+
+
+class Token(Enum):
+    NUMBER              = 1
+    BI_OPERATION        = 2
+    LEFT_PARENTHESIS    = 3
+    RIGHT_PARENTHESIS   = 4
+    FUNCTION            = 5
+
+NUMBER_START_CHARS = ['+','-','.'] + DIGITS
+
+SIMPLE_OPERATIONS = OPERATIONS[:] + ['(',')']
+for op in ['+','-']:SIMPLE_OPERATIONS.remove(op)
+
 def get_tokens(expression: str) -> list:
-    """
-    function converting expression to the list of tokens for
-    futher work with them
-    """
+    iterator = ExpressionIterator(expression)
     tokens = []
+    previous_token_type = None
 
-    for ch in expression:
+    while iterator.has_next():
+        ch = iterator.next()
         if ch in IGNORED_CHARS:
-            continue
-        elif ch in ONE_CHARACTER_TOKENS:
+            while ch in IGNORED_CHARS and iterator.has_next():
+                ch = iterator.next()
+            if iterator.has_next() or ch not in IGNORED_CHARS:
+                iterator.previous()
+        elif ch in SIMPLE_OPERATIONS:
             tokens.append(ch)
-        elif ch in NUMBER_CHARS:
-            if len(tokens) == 0 or not str_is_number(tokens[-1]):
-                tokens.append(ch)
-            elif ch == '.' and ch in tokens[-1]:
-                raise ValueError("can't have two '.' in number")
+            if ch == '(':
+                previous_token_type = Token.LEFT_PARENTHESIS
+            elif ch == ')':
+                previous_token_type = Token.RIGHT_PARENTHESIS
             else:
-                tokens[-1] += ch
-        elif ch in string.ascii_lowercase:
-            if len(tokens) == 0:
+                previous_token_type = Token.BI_OPERATION
+        elif previous_token_type == Token.NUMBER:
+            if ch in BINARY_OPERATIONS:
                 tokens.append(ch)
-            elif tokens[-1][-1] in string.ascii_lowercase:
-                tokens[-1] += ch
+                previous_token_type = Token.BI_OPERATION
             else:
+                raise ValueError("Not a parenthesis or operation after number")
+        elif previous_token_type == Token.BI_OPERATION:
+            token = parse_number_or_function(iterator)
+            tokens.append(token)
+            if isinstance(token,Decimal):
+                previous_token_type = Token.NUMBER
+            else:
+                previous_token_type = Token.FUNCTION
+        elif previous_token_type == Token.LEFT_PARENTHESIS:
+            if ch in string.ascii_lowercase:
+                tokens.append(parse_function(iterator))
+                previous_token_type = Token.FUNCTION
+            else:
+                tokens.append(parse_number(iterator))
+                previous_token_type = Token.NUMBER
+        elif previous_token_type == Token.RIGHT_PARENTHESIS:
+            if ch in OPERATIONS:
                 tokens.append(ch)
+                previous_token_type = Token.BI_OPERATION
+            else:
+                print(ch)
+                raise ValueError("No binary operation after parenthesis")
+        elif previous_token_type == Token.FUNCTION:
+            raise ValueError("Parametr passed to function must be enclosed in brekets")
         else:
-            raise ValueError(f"{ch} is not a valid character")
+            token = parse_number_or_function(iterator)
+            tokens.append(token)
+            if isinstance(token,Decimal):
+                previous_token_type = Token.NUMBER
+            else:
+                previous_token_type = Token.FUNCTION
 
-    tokens = convert_string_numbers_to_decimal(tokens)
-    tokens = place_constants(tokens)
+
+
     return tokens
 
+def parse_number_or_function(iterator: ExpressionIterator):
+    iterator.previous()
+    ch = iterator.next()
+    if ch in NUMBER_START_CHARS:
+        return (parse_number(iterator))
+    elif ch in string.ascii_lowercase:
+        token = parse_charcter_thing(iterator)
+        if token in CONSTANTS:
+            token = CONSTANTS[token]
+        return token
+    else:
+        raise ValueError(f"{ch} is not a valid token")
 
-def convert_string_numbers_to_decimal(tokens_list: list) -> list:
-    """
-    function replacing string representationg of tokens with Decimal
-    and appling unary "-" operator (joining "-" to numbers)
-    """
-    tokens_list = tokens_list[:]
-    for index in range(len(tokens_list)):
-        token = tokens_list[index]
-        if str_is_number(token):
-            token = Decimal(token)
-            tokens_list[index] = token
+def parse_number(iterator: ExpressionIterator) -> Decimal:
+    result = ""
+    ch = iterator.previous()
+    if ch in ['+','-']:
+        result += ch
+        iterator.next()
 
-    index = 0
-    while index < len(tokens_list):
-        token = tokens_list[index]
-        if (token == "-") and\
-           (index == 0 or tokens_list[index - 1] in OPERATIONS) and\
-           (type(tokens_list[index + 1]) == Decimal):
-            tokens_list[index:index + 2] = [-tokens_list[index + 1]]
-        index += 1
+    ch = iterator.next() if iterator.has_next() else None
+    while ch in DIGITS:
+        result += ch
+        if iterator.has_next():
+            ch = iterator.next()
+        else:
+            ch = None
 
-    return tokens_list
+    if ch == '.':
+        result += ch
+        ch = iterator.next()
+        while ch in DIGITS:
+            result += ch
+            if iterator.has_next():
+                ch = iterator.next()
+            else:
+                ch = None
 
+    if ch == 'E':
+        result += ch
+        ch = iterator.next()
+        if ch in ['+','-']:
+            result += ch
+            ch = iterator.next()
+        while ch in DIGITS:
+            result += ch
+            if iterator.has_next():
+                ch = iterator.next()
+            else:
+                ch = None
 
-def str_is_number(token):
-    """
-    function returns True if token is str, representing number
-    int or float in python format
-    """
-    if token.count('.') > 1:
-        return False
-    return all(map(lambda ch: ch in NUMBER_CHARS, token))
+    if ch != None:
+        iterator.previous()
+    return Decimal(result)
 
+def parse_function(iterator: ExpressionIterator) -> str:
+    return parse_charcter_thing(iterator)
 
-def place_constants(tokens: list) -> list:
-    """function replacing CONSTANTS in tokens with their values"""
-    tokens = tokens[:]
-    for i in range(len(tokens)):
-        if tokens[i] in CONSTANTS:
-            tokens[i] = CONSTANTS[tokens[i]]
-    return tokens
+def parse_constant(iterator: ExpressionIterator) -> Decimal:
+    return CONSTANTS[parse_charcter_thing(iterator)]
+
+def parse_charcter_thing(iterator: ExpressionIterator):
+    result = ""
+    iterator.previous()
+    ch = iterator.next()
+    while ch in string.ascii_lowercase:
+        result += ch
+        ch = iterator.next() if iterator.has_next() else None
+
+    if ch != None:
+        iterator.previous()
+    return result
 
 
 def convert_to_rpn(tokens_list) -> list:
