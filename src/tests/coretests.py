@@ -42,7 +42,13 @@ def test_tokenizer():
                    (("(4*4)+4.5",),       ['(',4,'*',4,')','+',4.5]),
 
                    (("   sin(1)/2",),     ["sin","(",1,")","/",2]),
-                   (("5*atan7 + 3",),     [5,"*","atan",7,"+",3])
+                   (("5*atan(7) + 3",),   [5,"*","atan","(",7,")","+",3]),
+
+                   ((("5+8E3"),),         [5,"+",8e3]),
+                   ((("1E3-3E8",)),       [1e3,"-",3e8]),
+                   ((("1.32E+5",)),       [1.32e5]),
+                   ((("0.58E-3 / 3",)),   [0.58e-3,"/",3]),
+                   ((("sin(1.34E-3)",)),  ["sin","(",1.34e-3,")"])
     ]
     expecations = [(i, _to_decimal(j)) for i, j in expecations]
 
@@ -50,6 +56,7 @@ def test_tokenizer():
     testutil.test(get_tokens, expecations)
 
     print("tokenizer test succeeded")
+
 
 
 def test_rpn_convertor():
@@ -107,7 +114,7 @@ def test_calculation():
                    ("8.7 + -5",3.7),
                    ("-2 - -3",1),
                    ("58 - 23",35),
-                   ("58 - - 23",81),
+                   ("58 - -23",81),
                    ("-5.7 - 3",-8.7),
                    ("54*128",6912),
                    ("-3*-4",12),
@@ -130,6 +137,23 @@ def test_calculation():
     print("expression calculation test succeded")
 
 
+
+def test_formating():
+  format = core.format_decimal
+  expecations = [
+                 (Decimal("0.10000000"),"0.1"),
+                 (Decimal("-5435943.4395439000"),"-5435943.4395439"),
+                 (Decimal("4.0000"),"4"),
+                 (Decimal("439584390.000000"),"439584390"),
+
+                 (Decimal("43543.43534522452645645"),str(Decimal("43543.4353452245264564"))),
+                 (Decimal("0.34593487594375943875943"),str(Decimal("0.3459348759437594")))
+  ]
+
+  testutil.test(format, expecations, one_argument_function=True)
+  print("formating test succeded")
+
+
 def _to_decimal(input_list) -> list:
     input_list = input_list[:]
     for i in range(len(input_list)):
@@ -143,6 +167,7 @@ def run_core_tests():
     test_rpn_convertor()
     test_evaluator()
     test_calculation()
+    test_formating()
 
 
 if __name__ == "__main__":
