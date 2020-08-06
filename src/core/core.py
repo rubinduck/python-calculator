@@ -79,21 +79,21 @@ class ExpressionIterator():
     Class represinting iterator functionality, used to parse expresssion into
     tokens
     """
-    def __init__(self,expression):
+    def __init__(self, expression):
         self.expression = expression
-        self.iteration_index = 0
+        self.index = 0
 
     def has_next(self):
-        return self.iteration_index < len(self.expression)
+        return self.index < len(self.expression)
 
     def next(self):
-        value = self.expression[self.iteration_index]
-        self.iteration_index += 1
+        value = self.expression[self.index]
+        self.index += 1
         return value
 
     def previous(self):
-        self.iteration_index -= 1
-        return self.expression[self.iteration_index]
+        self.index -= 1
+        return self.expression[self.index]
 
 
 class Token(Enum):
@@ -106,7 +106,6 @@ class Token(Enum):
     LEFT_PARENTHESIS    = 3
     RIGHT_PARENTHESIS   = 4
     FUNCTION            = 5
-
 
 
 def get_tokens(expression: str) -> list:
@@ -145,7 +144,7 @@ def get_tokens(expression: str) -> list:
         elif previous_token_type == Token.BI_OPERATION:
             token = parse_number_or_function(iterator)
             tokens.append(token)
-            if isinstance(token,Decimal):
+            if isinstance(token, Decimal):
                 previous_token_type = Token.NUMBER
             else:
                 previous_token_type = Token.FUNCTION
@@ -161,23 +160,23 @@ def get_tokens(expression: str) -> list:
                 tokens.append(ch)
                 previous_token_type = Token.BI_OPERATION
             else:
-                print(ch)
                 raise ValueError("No binary operation after parenthesis")
         elif previous_token_type == Token.FUNCTION:
             raise ValueError("Parametr passed to function must be enclosed in brekets")
         else:
             token = parse_number_or_function(iterator)
             tokens.append(token)
-            if isinstance(token,Decimal):
+            if isinstance(token, Decimal):
                 previous_token_type = Token.NUMBER
             else:
                 previous_token_type = Token.FUNCTION
 
     return tokens
 
+
 def parse_number_or_function(iterator: ExpressionIterator):
     """
-    fucnction decinding shoudl number or function be parsed and parsing it
+    fucnction deciding should number or function be parsed and parsing it
     """
     iterator.previous()
     ch = iterator.next()
@@ -191,6 +190,7 @@ def parse_number_or_function(iterator: ExpressionIterator):
     else:
         raise ValueError(f"{ch} is not a valid token")
 
+
 def parse_number(iterator: ExpressionIterator) -> Decimal:
     """
     function parsing number according to BNF notation in doc on start of module
@@ -198,44 +198,36 @@ def parse_number(iterator: ExpressionIterator) -> Decimal:
     """
     result = ""
     ch = iterator.previous()
-    if ch in ['+','-']:
+    ch = iterator.next()
+    if ch in ['+', '-']:
         result += ch
-        iterator.next()
+        ch = iterator.next()
 
-    ch = iterator.next() if iterator.has_next() else None
     while ch in DIGITS:
         result += ch
-        if iterator.has_next():
-            ch = iterator.next()
-        else:
-            ch = None
+        ch = iterator.next() if iterator.has_next() else None
 
     if ch == '.':
         result += ch
         ch = iterator.next()
         while ch in DIGITS:
             result += ch
-            if iterator.has_next():
-                ch = iterator.next()
-            else:
-                ch = None
+            ch = iterator.next() if iterator.has_next() else None
 
     if ch == 'E':
         result += ch
         ch = iterator.next()
-        if ch in ['+','-']:
+        if ch in ['+', '-']:
             result += ch
             ch = iterator.next()
         while ch in DIGITS:
             result += ch
-            if iterator.has_next():
-                ch = iterator.next()
-            else:
-                ch = None
+            ch = iterator.next() if iterator.has_next() else None
 
     if ch != None:
         iterator.previous()
     return Decimal(result)
+
 
 def parse_function(iterator: ExpressionIterator) -> str:
     return parse_charcter_thing(iterator)
@@ -349,6 +341,9 @@ def evaluate(rpn_expression: list) -> Decimal:
 
 
 def calculate_expression(expression: str) -> Decimal:
+    """
+    evaluate wrapper with exceptioins
+    """
     try:
         return evaluate(convert_to_rpn(get_tokens(expression)))
     except ValueError as ex:
@@ -356,11 +351,12 @@ def calculate_expression(expression: str) -> Decimal:
     except decimal.DivisionByZero as ex:
         raise IncorrectInputError("can't divide by zero")
 
-def format_decimal(result: Decimal,digits_amount: int=16) -> str:
+
+def format_decimal(result: Decimal, digits_amount: int = 16) -> str:
     """
     function formating calculation result to normal looking string
     """
-    result = round(result,digits_amount)
+    result = round(result, digits_amount)
     result = str(result)
     result = result.rstrip('0') if '.' in result else result
     result = result.rstrip('.')
