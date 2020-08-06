@@ -1,16 +1,23 @@
 """
-Core calculator module, providing logic for parsing, converting and evaluating
-expressions
+Core calculator module, providing logic for parsing, converting, evaluating and
+formating expression
 
+Some expression structure in BNF form:
 operations ::= + | - | * | / | () | ^
 functions ::= sin | cos | tan | asin | acos | atan| sqrt
-float ::= [<interger part>].<floating part>
-numbers ::= [-]<int> | <float>
-constantas ::= pi | e
+constants ::= pi | e
+
+<number> ::= <cofficeint>[<exponent>]
+<cofficeint> ::= [<sign>]<int>[<fraction>] | [<sign>]<fraction>
+<sign> ::= + | -
+<int> ::= <digit>[<int>]
+<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+<fraction> ::= .<int>
+<exponent> ::= E[<sign>]<int>
 
 operations precedence:
 1: +, -
-2: *, /
+2: *, /, ^
 3: ()
 4:functions
 """
@@ -19,31 +26,34 @@ operations precedence:
 import string
 import decimal
 
-from decimal import Decimal
 from enum import Enum
 from typing import Tuple
+
+from decimal import Decimal
 from math import sin, cos, tan, asin, acos, atan, sqrt
 from math import pi, e
 
-DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-NUMBER_CHARS = DIGITS + ["."]
+DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
 
-OPERATIONS = ['+', '-', '*', '/', '^']
+OPERATIONS = {'+', '-', '*', '/', '^'}
 FUNCTIONS = ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt"]
 CONSTANTS = {"pi": Decimal(str(pi)),
              "e":  Decimal(str(e))}
 
-ONE_CHARACTER_TOKENS = ['+', '-', '*', '/', '(', ')', '^']
+# simple operations is operations what can be parsed regardless of context
+# used in get_tokens. Don't include '+' and '-' becouse number can have them
+SIMPLE_OPERATIONS = (OPERATIONS | {'(', ')'}) - {'+', '-'}
+NUMBER_START_CHARS = {'+', '-', '.'} | DIGITS
 IGNORED_CHARS = [' ']
+
 
 PRECEDENCE = {'+': 1, '-': 1,
               '*': 2, '/': 2, '^': 2,
               "(": 3, ")": 3,
               **dict.fromkeys(FUNCTIONS, 4)}
 
-
 UNARY_OPERATIONS = FUNCTIONS[:]
-BINARY_OPERATIONS = ['+', '-', '*', '/', '^']
+BINARY_OPERATIONS = OPERATIONS.copy()
 
 OPERATION_REALIZATIONS = {"+": lambda x, y: x + y,
                           "-": lambda x, y: x - y,
@@ -65,6 +75,10 @@ ASSOCIATIVITY = {'+': "left", '-': "left",
 
 
 class ExpressionIterator():
+    """
+    Class represinting iterator functionality, used to parse expresssion into
+    tokens
+    """
     def __init__(self,expression):
         self.expression = expression
         self.iteration_index = 0
@@ -83,18 +97,26 @@ class ExpressionIterator():
 
 
 class Token(Enum):
+    """
+    Enum representing some tokens types. Is used in get_tokens to have some
+    behaviour based on previous parsed token
+    """
     NUMBER              = 1
     BI_OPERATION        = 2
     LEFT_PARENTHESIS    = 3
     RIGHT_PARENTHESIS   = 4
     FUNCTION            = 5
 
-NUMBER_START_CHARS = ['+','-','.'] + DIGITS
 
-SIMPLE_OPERATIONS = OPERATIONS[:] + ['(',')']
-for op in ['+','-']:SIMPLE_OPERATIONS.remove(op)
 
 def get_tokens(expression: str) -> list:
+    """
+    Function reterning token list for given expression.
+    Operations and functions tokens are represented by str, numbers and const -
+    by Decimal.
+    Mainly works on finite-state machine similar idea - parses next token
+    depengiding on type of previous one
+    """
     iterator = ExpressionIterator(expression)
     tokens = []
     previous_token_type = None
@@ -151,11 +173,12 @@ def get_tokens(expression: str) -> list:
             else:
                 previous_token_type = Token.FUNCTION
 
-
-
     return tokens
 
 def parse_number_or_function(iterator: ExpressionIterator):
+    """
+    fucnction decinding shoudl number or function be parsed and parsing it
+    """
     iterator.previous()
     ch = iterator.next()
     if ch in NUMBER_START_CHARS:
@@ -169,6 +192,10 @@ def parse_number_or_function(iterator: ExpressionIterator):
         raise ValueError(f"{ch} is not a valid token")
 
 def parse_number(iterator: ExpressionIterator) -> Decimal:
+    """
+    function parsing number according to BNF notation in doc on start of module
+    parses number by parts:sign, int, fraction, exponent
+    """
     result = ""
     ch = iterator.previous()
     if ch in ['+','-']:
@@ -217,6 +244,10 @@ def parse_constant(iterator: ExpressionIterator) -> Decimal:
     return CONSTANTS[parse_charcter_thing(iterator)]
 
 def parse_charcter_thing(iterator: ExpressionIterator):
+    """
+    function parsing anything consisting only from string.ascii_lowercase as
+    one token
+    """
     result = ""
     iterator.previous()
     ch = iterator.next()
