@@ -37,6 +37,7 @@ DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}
 
 OPERATIONS = {'+', '-', '*', '/', '^'}
 FUNCTIONS = ["sin", "cos", "tan", "asin", "acos", "atan", "sqrt"]
+
 CONSTANTS = {"pi": Decimal(str(pi)),
              "e":  Decimal(str(e))}
 
@@ -55,23 +56,65 @@ PRECEDENCE = {'+': 1, '-': 1,
 UNARY_OPERATIONS = FUNCTIONS[:]
 BINARY_OPERATIONS = OPERATIONS.copy()
 
+TRIGONOMETRIC_FUNCTIONS = {"sin": lambda x: Decimal(str(sin(x))),
+                           "cos": lambda x: Decimal(str(cos(x))),
+                           "tan": lambda x: Decimal(str(tan(x))),
+                           "asin": lambda x: Decimal(str(asin(x))),
+                           "acos": lambda x: Decimal(str(acos(x))),
+                           "atan": lambda x: Decimal(str(atan(x))),
+                           "sqrt": lambda x: Decimal(str(sqrt(x)))}
+
 OPERATION_REALIZATIONS = {"+": lambda x, y: x + y,
                           "-": lambda x, y: x - y,
                           "*": lambda x, y: x * y,
                           "/": lambda x, y: x / y,
-                          '^': lambda x, y: x**y,
-                          "sin": lambda x: Decimal(str(sin(x))),
-                          "cos": lambda x: Decimal(str(cos(x))),
-                          "tan": lambda x: Decimal(str(tan(x))),
-                          "asin": lambda x: Decimal(str(asin(x))),
-                          "acos": lambda x: Decimal(str(acos(x))),
-                          "atan": lambda x: Decimal(str(atan(x))),
-                          "sqrt": lambda x: Decimal(str(sqrt(x)))}
+                          '^': lambda x, y: x**y}
+OPERATION_REALIZATIONS.update(TRIGONOMETRIC_FUNCTIONS)
 
 ASSOCIATIVITY = {'+': "left", '-': "left",
                  '*': "left", '/': "left",
                  '^': "left",
                  **dict.fromkeys(FUNCTIONS, "right")}
+
+
+class AngleType(Enum):
+    DEGREE = 1
+    RADIAN = 2
+
+
+class Settings():
+    """
+    Class providing interface to change settings of core behaviour
+    """
+    def __init__(self):
+        self.accuarcy = 16
+
+    def set_accuracy(n: int):
+        if not isinstance(n, int) or n < 1:
+            raise ValueError(f"{n} is not valid accuarcy")
+        self.accuarcy = n
+
+    def set_angle_type(type: AngleType):
+        for f_name in TRIGONOMETRIC_FUNCTIONS:
+            OPERATION_REALIZATIONS[f_name] = trig_f_wrapper(f_name, type)
+
+
+def trig_f_wrapper(f_name, angle_type: AngleType):
+    """
+    function providing realization of trigonometric function depending on use
+    of degrees or radians
+    """
+    if angle_type == AngleType.RADIAN:
+        return TRIGONOMETRIC_FUNCTIONS[f_name]
+    elif angle_type == AngleType.DEGREE:
+        return lambda x: TRIGONOMETRIC_FUNCTIONS[f_name](degree_to_radian(x))
+
+
+def degree_to_radian(angle: Decimal):
+    return angle * pi / Decimal(180)
+
+
+settings = Settings()
 
 
 class ExpressionIterator():
@@ -352,7 +395,7 @@ def calculate_expression(expression: str) -> Decimal:
         raise IncorrectInputError("can't divide by zero")
 
 
-def format_decimal(result: Decimal, digits_amount: int = 16) -> str:
+def format_decimal(result: Decimal, digits_amount: int = settings.accuarcy) -> str:
     """
     function formating calculation result to normal looking string
     """
