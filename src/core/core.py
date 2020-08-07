@@ -89,12 +89,15 @@ class Settings():
     def __init__(self):
         self.accuarcy = 16
 
-    def set_accuracy(n: int):
+    def set_accuracy(self, n: int):
         if not isinstance(n, int) or n < 1:
             raise ValueError(f"{n} is not valid accuarcy")
+        if n > 27:
+            raise ValueError(
+                "sadly accuarcy bigger than 27 don't work in round function (")
         self.accuarcy = n
 
-    def set_angle_type(type: AngleType):
+    def set_angle_type(self, type: AngleType):
         for f_name in TRIGONOMETRIC_FUNCTIONS:
             OPERATION_REALIZATIONS[f_name] = trig_f_wrapper(f_name, type)
 
@@ -111,7 +114,7 @@ def trig_f_wrapper(f_name, angle_type: AngleType):
 
 
 def degree_to_radian(angle: Decimal):
-    return angle * pi / Decimal(180)
+    return angle * CONSTANTS["pi"] / Decimal(180)
 
 
 settings = Settings()
@@ -395,11 +398,11 @@ def calculate_expression(expression: str) -> Decimal:
         raise IncorrectInputError("can't divide by zero")
 
 
-def format_decimal(result: Decimal, digits_amount: int = settings.accuarcy) -> str:
+def format_decimal(result: Decimal) -> str:
     """
     function formating calculation result to normal looking string
     """
-    result = round(result, digits_amount)
+    result = round(result, settings.accuarcy)
     result = str(result)
     result = result.rstrip('0') if '.' in result else result
     result = result.rstrip('.')
