@@ -5,10 +5,57 @@ Module conating graphical parts of calculator GUI, without logic
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import (QLabel, QApplication, QScrollArea, QPushButton,
-                             QWidget, QVBoxLayout, QMainWindow, QLineEdit, QGridLayout, QSizePolicy)
+                             QWidget, QVBoxLayout, QMainWindow, QLineEdit,
+                             QGridLayout, QSizePolicy, QMenuBar, QComboBox,
+                             QWidgetAction, QAction, QActionGroup)
 
 
-class ScrollableLable (QScrollArea):
+class CalculatorMenuBar(QMenuBar):
+    """
+    Menu bar of calculator window
+    """
+    accuracy_changed = pyqtSignal(int)
+    angle_type_changed = pyqtSignal(str)
+
+    def __init__(self, *args, **kargs):
+        super().__init__(*args, **kargs)
+        self.init_settings_menu()
+
+    def init_settings_menu(self):
+        self.settings = self.addMenu("&Settings")
+
+        angle_type = self.settings.addMenu("angle unit")
+        angle_group = QActionGroup(self)
+        for angle_type_name in ["radian", "degree"]:
+            action = QAction(self)
+            action.setText(angle_type_name)
+            action.setCheckable(True)
+            if angle_type_name == "radian":
+                action.setChecked(True)
+            action.triggered.connect(self.emit_angle_type_change)
+            angle_group.addAction(action)
+            angle_type.addAction(action)
+
+        accuarcy = self.settings.addMenu("accuracy")
+        accuracy_group = QActionGroup(self)
+        for accuracy in ["5", "10", "15", "20", "27"]:
+            action = QAction(self)
+            action.setText(accuracy)
+            action.setCheckable(True)
+            action.triggered.connect(self.emit_accuracy_change)
+            accuracy_group.addAction(action)
+            accuarcy.addAction(action)
+
+    @pyqtSlot()
+    def emit_angle_type_change(self):
+        self.angle_type_changed.emit(self.sender().text())
+
+    @pyqtSlot()
+    def emit_accuracy_change(self):
+        self.accuracy_changed.emit(int(self.sender().text()))
+
+
+class ScrollableLable(QScrollArea):
     """
     Wrapper around QLabel class, that enables it to be scrollable
     Passes all undefined in QScrollabel argument calls to label obj inside
@@ -193,21 +240,26 @@ class CalculatorMainWindowGui(QMainWindow):
     def init_ui(self):
         self.setMinimumSize(self.MINIMUM_WIDTH, self.MINIMUM_HEIGHT)
 
+        self.setMenuBar(CalculatorMenuBar())
+
         self.add_content_container()
         self._layout.setSpacing(self.WIDGET_SPACING)
 
         content_container = self.content_container
 
+        menu = CalculatorMenuBar()
         history_widget = HistoryWidget(content_container)
         eror_widget = ErrorMessageWidget()
         main_line_widget = MainLineWidget(content_container)
         main_controls_widget = MainControlButtonsWidget(content_container)
 
+        self._widgets["menu"] = menu
         self._widgets["history"] = history_widget
         self._widgets["error_message"] = eror_widget
         self._widgets["main_line"] = main_line_widget
         self._widgets["main_controls"] = main_controls_widget
 
+        self.setMenuBar(menu)
         for widget in self._widgets.values():
             widget.setMinimumSize(0, 0)
             self._layout.addWidget(widget)

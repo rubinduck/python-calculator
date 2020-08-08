@@ -41,6 +41,11 @@ def run_test_app(MainWindowClass, *args, widget_args=(), keyword_widget_args={})
     window.show()
     app.exec()
 
+def test_CalculatorMenuBar():
+    CalculatorMenuBar = gui.CalculatorMenuBar
+    class Main(WidgetTestingContainer):
+        pass
+    run_test_app(Main, (200, 200, 200, 200), CalculatorMenuBar)
 
 def test_HistoryWidget():
     HistoryWidget = gui.HistoryWidget
@@ -100,6 +105,7 @@ def test_CalculatorMainWindow():
 
 
 def run_gui_tests():
+    test_CalculatorMenuBar()
     test_HistoryWidget()
     test_MainLineWidget()
     test_GeneralControlButtonsPanel()
