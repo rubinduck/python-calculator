@@ -111,6 +111,8 @@ def trig_f_wrapper(f_name, angle_type: AngleType):
         return TRIGONOMETRIC_FUNCTIONS[f_name]
     elif angle_type == AngleType.DEGREE:
         return lambda x: TRIGONOMETRIC_FUNCTIONS[f_name](degree_to_radian(x))
+    else:
+        raise Exception(f"{angle_type} - incorrect value")
 
 
 def degree_to_radian(angle: Decimal):

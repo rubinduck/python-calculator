@@ -5,7 +5,8 @@ Module conating unification of GUI and it's logic
 from PyQt5.QtCore import Qt, pyqtSlot
 
 from .guiwidgets import CalculatorMainWindowGui
-from core import calculate_expression, format_decimal, IncorrectInputError
+
+from core import settings, AngleType, calculate_expression, format_decimal, IncorrectInputError
 
 
 class CalculatorMainWindow(CalculatorMainWindowGui):
@@ -20,6 +21,7 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
         self.setup_input_focus()
         self.setup_calculation_logic()
         self.setup_buttons_work()
+        self.setup_settings_work()
 
     def setup_input_focus(self):
         """
@@ -43,7 +45,7 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
         self._widgets["main_line"].returnPressed.connect(self.calculate)
 
     def setup_buttons_work(self):
-        """function connecting buttons signals to slots"""
+        """method connecting buttons signals to slots"""
         main_controls = self._widgets["main_controls"]
         main_controls.enter_char.connect(self.enter_char)
         main_controls.clear.connect(self.clear)
@@ -75,6 +77,27 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
         result = format_decimal(result)
         self._widgets["history"].add_line(f"{expression}={result}")
         self._widgets["main_line"].setText(f"{result}")
+
+    def setup_settings_work(self):
+        """
+        method setting up slots changing calculator settings
+        """
+        menu = self._widgets["menu"]
+        menu.angle_type_changed.connect(self.angle_type_changed)
+        menu.accuracy_changed.connect(self.accuracy_changed)
+
+    @pyqtSlot(str)
+    def angle_type_changed(self, value):
+        if value == "radian":
+            settings.set_angle_type(AngleType.RADIAN)
+        elif value == "degree":
+            settings.set_angle_type(AngleType.DEGREE)
+        else:
+            raise Exception("Something messed up with settings")
+
+    @pyqtSlot(int)
+    def accuracy_changed(self, value):
+        settings.set_accuracy(value)
 
     def show_error_message(self, ex: Exception):
         """
