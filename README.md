@@ -9,20 +9,19 @@ Supports basic operations: +, -, *, /, ^ (raise to power), and functions: sin co
 --------
 Require Python 3.5+
 
-
-```sh
 To intstall on linux:
-1. git clone https://github.com/rubinduck/python-calculator
-2. cd python-calculator
-3. ./install_linux.sh
-4. python src/cli.py for CLI or python src/launch_gui.py for GUI
+```sh
+ git clone https://github.com/rubinduck/python-calculator
+ cd python-calculator
+ ./install_linux.sh
+ python src/cli.py for CLI or python src/launch_gui.py for GUI
 ```
  
 To install on Windows:
 ```sh
-1. git clone https://github.com/rubinduck/python-calculator
-2. cd python-calculator
-3. ./install_windows.bat
-4. python src/cli.py for CLI or python src/launch_gui.py for GUI
+ git clone https://github.com/rubinduck/python-calculator
+ cd python-calculator
+ ./install_windows.bat
+ python src/cli.py for CLI or python src/launch_gui.py for GUI
 ```
 
