@@ -6,7 +6,8 @@ from PyQt5.QtCore import Qt, pyqtSlot
 
 from .guiwidgets import CalculatorMainWindowGui
 
-from core import settings, AngleType, calculate_expression, format_decimal, IncorrectInputError
+from core import (settings, AngleType, calculate_expression, format_decimal,
+                  IncorrectInputError)
 
 
 class CalculatorMainWindow(CalculatorMainWindowGui):
@@ -38,7 +39,6 @@ class CalculatorMainWindow(CalculatorMainWindowGui):
                 widget.setFocusPolicy(Qt.NoFocus)
 
         for widget in self._widgets["main_controls"].buttons.values():
-            widget.setFocusProxy(main_line_widget)
             widget.setFocusPolicy(Qt.NoFocus)
 
     def setup_calculation_logic(self):

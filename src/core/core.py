@@ -398,6 +398,8 @@ def calculate_expression(expression: str) -> Decimal:
         raise IncorrectInputError(*ex.args)
     except decimal.DivisionByZero as ex:
         raise IncorrectInputError("can't divide by zero")
+    except decimal.Overflow as ex:
+        raise IncorrectInputError("result too big, overflow")
 
 
 def format_decimal(result: Decimal) -> str:

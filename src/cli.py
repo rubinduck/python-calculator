@@ -27,8 +27,8 @@ def main():
                         help="type of angle: radian or degree, default is radian")
 
     args = parser.parse_args()
-    if args.accuarcy != None:
-        core.settings.set_accuracy(args.accuarcy)
+    if args.accuaracy != None:
+        core.settings.set_accuracy(args.accuaracy)
 
     angle = args.angle
     if angle != None:
