@@ -133,7 +133,7 @@ class GeneralControlButtonsPanel(QWidget):
     """
     Class representing general case of control buttons grid
     """
-    SPACE_BETWEEN_BUTTONS = 5
+    SPACE_BETWEEN_BUTTONS = 3
 
     def __init__(self, *args, row_length, **kargs):
         super().__init__(*args, **kargs)
