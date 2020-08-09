@@ -3,6 +3,7 @@ if __name__ == "__main__":
     import os
     dirname = os.path.dirname
     path = dirname(dirname(__file__))
+    path = os.path.join(path, "src")
     sys.path.append(path)
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
