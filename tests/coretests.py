@@ -2,6 +2,7 @@ if __name__ == "__main__":
     import sys, os
     dirname = os.path.dirname
     path = dirname(dirname(__file__))
+    path = os.path.join(path, "src")
     sys.path.append(path)
     import testutil
 
