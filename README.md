@@ -11,7 +11,9 @@ To intstall on linux:
  git clone https://github.com/rubinduck/python-calculator
  cd python-calculator
  ./install_linux.sh
- python src/cli.py for CLI or python src/launch_gui.py for GUI
+ python src/cli.py #for CLI 
+#or
+python src/launch_gui.py #for GUI
 ```
  
 To install on Windows:
@@ -19,6 +21,7 @@ To install on Windows:
  git clone https://github.com/rubinduck/python-calculator
  cd python-calculator
  ./install_windows.bat
- python src/cli.py for CLI or python src/launch_gui.py for GUI
+#or
+python src/launch_gui.py #for GUI
 ```
 
