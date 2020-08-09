@@ -8,19 +8,19 @@ Require Python 3.5+
 
 To intstall on linux:
 ```sh
- git clone https://github.com/rubinduck/python-calculator
- cd python-calculator
- ./install_linux.sh
- python src/cli.py #for CLI 
+git clone https://github.com/rubinduck/python-calculator
+cd python-calculator
+./install_linux.sh
+python src/cli.py #for CLI 
 #or
 python src/launch_gui.py #for GUI
 ```
  
 To install on Windows:
 ```sh
- git clone https://github.com/rubinduck/python-calculator
- cd python-calculator
- ./install_windows.bat
+git clone https://github.com/rubinduck/python-calculator
+cd python-calculator
+./install_windows.bat
 #or
 python src/launch_gui.py #for GUI
 ```
