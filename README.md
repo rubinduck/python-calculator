@@ -1,12 +1,9 @@
  # python-calculator
-------------------
 Simple calculator written in Python
  # About
-------
 Calculator written in Python. Have both CLI and GUI.
 Supports basic operations: +, -, *, /, ^ (raise to power), and functions: sin cos, tan, asin, acos, atan, sqrt
  # Install
---------
 Require Python 3.5+
 
 To intstall on linux:
